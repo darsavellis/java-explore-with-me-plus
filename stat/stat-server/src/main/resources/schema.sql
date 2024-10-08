@@ -1,0 +1,7 @@
+CREATE TABLE hits (
+    id BIGINT GENERATED AS IDENTITY BY DEFAULT NOT NULL,
+    app varchar(1024) NOT NULL,
+    uri varchar(2083) NOT NULL,
+    ip varchar(31) NOT NULL,
+    timestamp TIMESTAMP WITHOUT TIMEZONE
+)
