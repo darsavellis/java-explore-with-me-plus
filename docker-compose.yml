@@ -3,7 +3,7 @@ services:
     build: stat/stat-server
     container_name: stat-server
     ports:
-      - "8080:8080"
+      - "9090:9090"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-stats
       - SPRING_DATASOURCE_USERNAME=user
