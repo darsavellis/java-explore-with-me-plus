@@ -5,19 +5,19 @@ services:
     ports:
       - "9090:9090"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-stats
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statistics
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=12345
 
   stats-db:
     image: postgres:16.1
-    container_name: postgres-ewm-stats-db
+    container_name: stats-server-db
     ports:
       - "6542:5432"
     environment:
       - POSTGRES_PASSWORD=12345
       - POSTGRES_USER=user
-      - POSTGRES_DB=ewm-stats
+      - POSTGRES_DB=statistics
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -25,7 +25,7 @@ services:
       retries: 10
   stats-db-init:
     image: postgres:16.1
-    container_name: stats-db-init
+    container_name: stats-server-db-init
     depends_on:
       stats-db:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
       - -c
       - |
         set -e
-        psql postgresql://user:12345@stats-db:5432/ewm-stats -v ON_ERROR_STOP=1 <<-EOSQL
+        psql postgresql://user:12345@stats-db:5432/statistics -v ON_ERROR_STOP=1 <<-EOSQL
         DROP TABLE IF EXISTS hits;
 
         CREATE TABLE IF NOT EXISTS hits (
