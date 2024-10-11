@@ -25,10 +25,7 @@ public class StatServiceImpl implements StatService {
     @Override
     public EndpointHitDto hit(EndpointHitDto endpointHitDto) {
         log.info("Запись {} в БД", endpointHitDto);
-//
-//        if (endpointHitDto.getTimestamp() == null) {
-//            endpointHitDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//        }
+
         EndpointHit endpointHit = EndPointHitMapper.mapToEndpointHit(endpointHitDto);
         log.info("Объект {} успешно сохранен в БД", endpointHit);
         return EndPointHitMapper.mapToEndpointHitDto(hitRepository.save(endpointHit));
