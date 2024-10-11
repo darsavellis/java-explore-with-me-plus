@@ -43,13 +43,13 @@ public class StatServiceImpl implements StatService {
         }
 
         if (!params.getUnique()) {
-            if (params.getUris() == null || params.getUris().isEmpty()) {
+            if (params.getUris() == null) {
                 statsToReturn = hitRepository.getAllStats(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStats(params.getUris(), params.getStart(), params.getEnd());
             }
         } else {
-            if (params.getUris() == null || params.getUris().isEmpty()) {
+            if (params.getUris() == null) {
                 statsToReturn = hitRepository.getAllStatsUniqueIp(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStatsUniqueIp(params.getUris(), params.getStart(), params.getEnd());
