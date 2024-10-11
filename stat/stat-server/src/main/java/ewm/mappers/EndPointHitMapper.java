@@ -2,12 +2,15 @@ package ewm.mappers;
 
 import ewm.dto.EndpointHitDto;
 import ewm.model.EndpointHit;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @UtilityClass
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EndPointHitMapper {
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

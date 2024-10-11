@@ -16,14 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Component
 public class StatRestClient {
-
-//    @Value("${spring.baseurl}")
-//    String url;
-
     final WebClient webClient = WebClient.builder()
         .baseUrl("http://localhost:9090")
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -31,7 +27,6 @@ public class StatRestClient {
         .build();
 
     public void addHit(EndpointHitDto hitDto) {
-
         Mono<EndpointHitDto> response = webClient.post()
             .uri("/hit")
             .body(Mono.just(hitDto), EndpointHitDto.class)
@@ -39,9 +34,7 @@ public class StatRestClient {
             .bodyToMono(EndpointHitDto.class);
     }
 
-
     public List<ViewStatsDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("/state")
@@ -55,7 +48,5 @@ public class StatRestClient {
             .bodyToMono(new ParameterizedTypeReference<List<ViewStatsDto>>() {
             })
             .block();
-
     }
-
 }

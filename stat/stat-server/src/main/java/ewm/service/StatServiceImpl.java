@@ -27,8 +27,9 @@ public class StatServiceImpl implements StatService {
         log.info("Запись {} в БД", endpointHitDto);
 
         EndpointHit endpointHit = EndPointHitMapper.mapToEndpointHit(endpointHitDto);
+        hitRepository.save(endpointHit);
         log.info("Объект {} успешно сохранен в БД", endpointHit);
-        return EndPointHitMapper.mapToEndpointHitDto(hitRepository.save(endpointHit));
+        return EndPointHitMapper.mapToEndpointHitDto(endpointHit);
     }
 
     @Override
