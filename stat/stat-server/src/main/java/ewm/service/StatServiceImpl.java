@@ -37,7 +37,7 @@ public class StatServiceImpl implements StatService {
         List<ViewStatsDto> statsToReturn;
 
         for (String uri : params.getUris()) {
-            if(uri.isEmpty()){
+            if (uri.isEmpty()) {
                 throw new InvalidDataException("Uri не может быть пустой строкой");
             }
         }
