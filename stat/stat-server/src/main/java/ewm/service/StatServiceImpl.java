@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +25,10 @@ public class StatServiceImpl implements StatService {
     @Override
     public EndpointHitDto hit(EndpointHitDto endpointHitDto) {
         log.info("Запись {} в БД", endpointHitDto);
-        endpointHitDto.setTimestamp(LocalDateTime.now());
+//
+//        if (endpointHitDto.getTimestamp() == null) {
+//            endpointHitDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        }
         EndpointHit endpointHit = EndPointHitMapper.mapToEndpointHit(endpointHitDto);
         log.info("Объект {} успешно сохранен в БД", endpointHit);
         return EndPointHitMapper.mapToEndpointHitDto(hitRepository.save(endpointHit));
@@ -34,7 +37,7 @@ public class StatServiceImpl implements StatService {
     @Override
     public List<ViewStatsDto> stats(RequestParamDto params) {
         log.info("Запрос статистики {}", params);
-        List<ViewStatsDto> statsToReturn;
+        List<ViewStatsDto> statsToReturn = new ArrayList<>();
 
         if (!params.getUnique()) {
             if (params.getUris() == null) {
@@ -49,6 +52,13 @@ public class StatServiceImpl implements StatService {
                 statsToReturn = hitRepository.getStatsUniqueIp(params.getUris(), params.getStart(), params.getEnd());
             }
         }
+
+        if(statsToReturn.isEmpty()){
+            for (String uri : params.getUris()) {
+                statsToReturn.add(new ViewStatsDto(null, uri, 0L));
+            }
+        }
+
         log.info("Данные статистики {} успешно считаны из БД", statsToReturn);
         return statsToReturn;
     }

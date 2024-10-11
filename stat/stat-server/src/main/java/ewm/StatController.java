@@ -7,6 +7,7 @@ import ewm.service.StatService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +33,8 @@ public class StatController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/stats")
-    public List<ViewStatsDto> stats(@RequestParam LocalDateTime start,
-                                    @RequestParam LocalDateTime end,
+    public List<ViewStatsDto> stats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                     @RequestParam(required = false) List<String> uris,
                                     @RequestParam(defaultValue = "false") Boolean unique) {
         RequestParamDto requestParamDto = new RequestParamDto(start, end, uris, unique);
