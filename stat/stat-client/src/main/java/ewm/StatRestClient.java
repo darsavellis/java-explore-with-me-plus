@@ -9,4 +9,8 @@ import org.springframework.web.client.RestTemplate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatRestClient {
     final RestTemplate restTemplate;
+
+    public static void main(String[] args) {
+
+    }
 }
