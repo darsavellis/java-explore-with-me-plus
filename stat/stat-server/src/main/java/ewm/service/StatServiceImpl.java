@@ -53,7 +53,7 @@ public class StatServiceImpl implements StatService {
             }
         }
 
-        if(statsToReturn.isEmpty()){
+        if (statsToReturn.isEmpty()) {
             for (String uri : params.getUris()) {
                 statsToReturn.add(new ViewStatsDto(null, uri, 0L));
             }
