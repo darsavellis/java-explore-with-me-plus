@@ -3,6 +3,7 @@ package ewm.service;
 import ewm.dto.EndpointHitDto;
 import ewm.dto.RequestParamDto;
 import ewm.dto.ViewStatsDto;
+import ewm.exceptions.InvalidDataException;
 import ewm.mappers.EndPointHitMapper;
 import ewm.model.EndpointHit;
 import ewm.repository.HitRepository;
@@ -35,14 +36,20 @@ public class StatServiceImpl implements StatService {
         log.info("Запрос статистики {}", params);
         List<ViewStatsDto> statsToReturn;
 
+        for (String uri : params.getUris()) {
+            if(uri.isEmpty()){
+                throw new InvalidDataException("Uri не может быть пустой строкой");
+            }
+        }
+
         if (!params.getUnique()) {
-            if (params.getUris() == null) {
+            if (params.getUris() == null || params.getUris().isEmpty()) {
                 statsToReturn = hitRepository.getAllStats(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStats(params.getUris(), params.getStart(), params.getEnd());
             }
         } else {
-            if (params.getUris() == null) {
+            if (params.getUris() == null || params.getUris().isEmpty()) {
                 statsToReturn = hitRepository.getAllStatsUniqueIp(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStatsUniqueIp(params.getUris(), params.getStart(), params.getEnd());

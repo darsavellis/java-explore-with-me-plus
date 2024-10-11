@@ -19,4 +19,9 @@ public class ErrorHandler {
         return new ErrorResponse("error", errorMessage);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidDataException.class)
+    public ErrorResponse handleInvalidData(final RuntimeException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
 }
