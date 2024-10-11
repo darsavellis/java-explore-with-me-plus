@@ -12,9 +12,9 @@ public class ErrorHandler {
     public ErrorResponse handleNotValidData(final MethodArgumentNotValidException e) {
 
         String errorMessage = "Запрос содержит невалидные данные: поле "
-                + e.getFieldError().getField()
-                + " "
-                + e.getFieldError().getDefaultMessage();
+            + e.getFieldError().getField()
+            + " "
+            + e.getFieldError().getDefaultMessage();
 
         return new ErrorResponse("error", errorMessage);
     }

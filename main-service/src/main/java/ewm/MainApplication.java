@@ -12,6 +12,5 @@ public class MainApplication {
         ConfigurableApplicationContext context = SpringApplication.run(MainApplication.class, args);
 //        StatClient statClient = context.getBean(StatClient.class);
 //        statClient.hit(new ParamHitDto());
-
     }
 }
