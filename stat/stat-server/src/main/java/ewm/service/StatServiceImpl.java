@@ -3,7 +3,6 @@ package ewm.service;
 import ewm.dto.EndpointHitDto;
 import ewm.dto.RequestParamDto;
 import ewm.dto.ViewStatsDto;
-import ewm.exceptions.InvalidDataException;
 import ewm.mappers.EndPointHitMapper;
 import ewm.model.EndpointHit;
 import ewm.repository.HitRepository;
@@ -21,15 +20,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatServiceImpl implements StatService {
     final HitRepository hitRepository;
+    final EndPointHitMapper hitMapper;
 
     @Override
-    public EndpointHitDto hit(EndpointHitDto endpointHitDto) {
+    public void hit(EndpointHitDto endpointHitDto) {
         log.info("Запись {} в БД", endpointHitDto);
-
-        EndpointHit endpointHit = EndPointHitMapper.mapToEndpointHit(endpointHitDto);
+        EndpointHit endpointHit = hitMapper.mapToEndpointHit(endpointHitDto);
         hitRepository.save(endpointHit);
         log.info("Объект {} успешно сохранен в БД", endpointHit);
-        return EndPointHitMapper.mapToEndpointHitDto(endpointHit);
     }
 
     @Override
@@ -37,22 +35,16 @@ public class StatServiceImpl implements StatService {
         log.info("Запрос статистики {}", params);
         List<ViewStatsDto> statsToReturn;
 
-        if (params.getUris() != null) {
-            for (String uri : params.getUris()) {
-                if (uri.isEmpty()) {
-                    throw new InvalidDataException("Uri не может быть пустой строкой");
-                }
-            }
-        }
+        boolean paramsIsExists = params.getUris() == null || params.getUris().isEmpty();
 
         if (!params.getUnique()) {
-            if (params.getUris() == null) {
+            if (paramsIsExists) {
                 statsToReturn = hitRepository.getAllStats(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStats(params.getUris(), params.getStart(), params.getEnd());
             }
         } else {
-            if (params.getUris() == null) {
+            if (paramsIsExists) {
                 statsToReturn = hitRepository.getAllStatsUniqueIp(params.getStart(), params.getEnd());
             } else {
                 statsToReturn = hitRepository.getStatsUniqueIp(params.getUris(), params.getStart(), params.getEnd());

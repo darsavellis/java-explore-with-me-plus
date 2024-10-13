@@ -7,7 +7,7 @@ import ewm.dto.ViewStatsDto;
 import java.util.List;
 
 public interface StatService {
-    EndpointHitDto hit(EndpointHitDto endpointHitDto);
+    void hit(EndpointHitDto endpointHitDto);
 
     List<ViewStatsDto> stats(RequestParamDto params);
 }

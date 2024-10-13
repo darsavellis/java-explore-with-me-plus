@@ -4,24 +4,15 @@ import ewm.dto.EndpointHitDto;
 import ewm.model.EndpointHit;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@UtilityClass
+@Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EndPointHitMapper {
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    public EndpointHitDto mapToEndpointHitDto(EndpointHit endpointHit) {
-        EndpointHitDto dto = new EndpointHitDto();
-        dto.setApp(endpointHit.getApp());
-        dto.setIp(endpointHit.getIp());
-        dto.setUri(endpointHit.getUri());
-        dto.setTimestamp(endpointHit.getTimestamp().format(dateTimeFormatter));
-        return dto;
-    }
+    final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public EndpointHit mapToEndpointHit(EndpointHitDto dto) {
         EndpointHit endpointHit = new EndpointHit();
