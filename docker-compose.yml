@@ -33,7 +33,7 @@ services:
     image: postgres:16.1
     container_name: main-db
     ports:
-      - "6541:5432"
+      - "6666:5432"
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=12345
@@ -54,4 +54,7 @@ services:
       main-db:
         condition: service_healthy
     environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/main-server
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=12345
       - EWM_STATS_SERVER_URL=http://stats-server:9090
