@@ -1,10 +1,11 @@
 package ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Size;
+import ewm.event.model.Location;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +13,10 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class NewEventDto {
-    @Size(max = 2000, min = 20)
+    @Length(min = 20, max = 2000)
     String annotation;
     Long category;
-    @Size(max = 7000, min = 20)
+    @Length(min = 20, max = 7000)
     String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
@@ -23,6 +24,6 @@ public class NewEventDto {
     boolean paid;
     Integer participantLimit;
     boolean requestModeration;
-    @Size(max = 120, min = 3)
+    @Length(min = 3, max = 120)
     String title;
 }
