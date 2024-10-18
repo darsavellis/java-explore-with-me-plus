@@ -1,4 +1,4 @@
-package ewm.event.dto;
+package ewm.event.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +12,6 @@ import lombok.ToString;
 @ToString
 public class Location {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name = "latitude")
     Float lat;
