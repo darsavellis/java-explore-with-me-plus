@@ -1,6 +1,6 @@
-package ewm.category.admin_part;
+package ewm.category.controller;
 
-import ewm.category.admin_part.service.CategoryServiceAdmin;
+import ewm.category.service.AdminCategoryService;
 import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
 import jakarta.validation.Valid;
@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryControllerAdmin {
-
-    final CategoryServiceAdmin serviceAdmin;
+public class AdminCategoryController {
+    final AdminCategoryService serviceAdmin;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,6 +35,4 @@ public class CategoryControllerAdmin {
                                 @RequestBody NewCategoryDto newCategoryDto) {
         return serviceAdmin.updateBy(catId, newCategoryDto);
     }
-
-
 }
