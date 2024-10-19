@@ -1,13 +1,13 @@
 package ewm.category.controller;
 
-import ewm.category.service.AdminCategoryService;
 import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
-import jakarta.validation.Valid;
+import ewm.category.service.AdminCategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +19,7 @@ public class AdminCategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto add(@Valid @RequestBody NewCategoryDto categoryDto) {
+    public CategoryDto add(@Validated @RequestBody NewCategoryDto categoryDto) {
         return serviceAdmin.add(categoryDto);
     }
 
@@ -29,10 +29,9 @@ public class AdminCategoryController {
         serviceAdmin.deleteBy(catId);
     }
 
-
     @PatchMapping(path = "/{catId}")
     public CategoryDto updateBy(@PathVariable("catId") long catId,
-                                @RequestBody NewCategoryDto newCategoryDto) {
+                                @Validated @RequestBody NewCategoryDto newCategoryDto) {
         return serviceAdmin.updateBy(catId, newCategoryDto);
     }
 }

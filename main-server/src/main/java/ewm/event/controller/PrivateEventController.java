@@ -8,6 +8,8 @@ import ewm.request.dto.EventRequestStatusUpdateRequest;
 import ewm.request.dto.EventRequestStatusUpdateResult;
 import ewm.request.dto.ParticipationRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +25,9 @@ public class PrivateEventController {
         return privateEventService.getAllBy(userId, from, size);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users/{userId}/events")
-    public EventFullDto create(@PathVariable long userId, @RequestBody NewEventDto newEventDto) {
+    public EventFullDto create(@PathVariable long userId, @Validated @RequestBody NewEventDto newEventDto) {
         return privateEventService.create(userId, newEventDto);
     }
 

@@ -1,7 +1,6 @@
 package ewm.category.controller;
 
 import ewm.category.dto.CategoryDto;
-import ewm.category.model.Category;
 import ewm.category.service.PublicCategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class PublicCategoryController {
 
     @GetMapping
     public List<CategoryDto> getAll(@RequestParam(defaultValue = "0") int from,
-                                 @RequestParam(defaultValue = "10") int size) {
+                                    @RequestParam(defaultValue = "10") int size) {
         return categoryService.getAll(from, size);
     }
 
