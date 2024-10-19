@@ -8,7 +8,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CategoryMapper {
     public CategoryDto toCategoryDto(Category category) {
-
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
@@ -17,7 +16,6 @@ public class CategoryMapper {
     }
 
     public Category toCategory(CategoryDto categoryDto) {
-
         Category category = new Category();
         categoryDto.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
@@ -26,7 +24,6 @@ public class CategoryMapper {
     }
 
     public NewCategoryDto toNewCategoryDto(Category category) {
-
         NewCategoryDto newCategoryDto = new NewCategoryDto();
         newCategoryDto.setName(category.getName());
 
@@ -34,7 +31,6 @@ public class CategoryMapper {
     }
 
     public Category toCategory(NewCategoryDto newCategoryDto) {
-
         Category category = new Category();
         category.setName(newCategoryDto.getName());
 

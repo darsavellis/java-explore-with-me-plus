@@ -1,10 +1,9 @@
-package ewm.category.admin_part.service;
+package ewm.category.service;
 
 import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
 
-public interface CategoryServiceAdmin {
-
+public interface AdminCategoryService {
     CategoryDto add(NewCategoryDto categoryDto);
 
     void deleteBy(long id);

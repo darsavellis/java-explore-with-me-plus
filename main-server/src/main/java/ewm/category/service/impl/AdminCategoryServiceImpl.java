@@ -1,21 +1,20 @@
-package ewm.category.admin_part.service;
+package ewm.category.service.impl;
 
 import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
 import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
-import ewm.category.repository.RepositoryCategory;
+import ewm.category.repository.CategoryRepository;
+import ewm.category.service.AdminCategoryService;
+import ewm.exeption.NotFoundException;
 import ewm.exeption.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceAdminImpl implements CategoryServiceAdmin {
-
-    final RepositoryCategory repository;
+public class AdminCategoryServiceImpl implements AdminCategoryService {
+    final CategoryRepository repository;
 
     @Override
     public CategoryDto add(NewCategoryDto categoryDto) {
@@ -30,13 +29,12 @@ public class CategoryServiceAdminImpl implements CategoryServiceAdmin {
 
     @Override
     public CategoryDto updateBy(long id, NewCategoryDto categoryDto) {
-        Optional<Category> category = repository.findById(id);
+        Category category = repository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
 
-        if (category.isPresent()) {
-            category.get().setName(categoryDto.getName());
-        }
+        category.setName(categoryDto.getName());
 
-        return CategoryMapper.toCategoryDto(repository.save(category.get()));
+        return CategoryMapper.toCategoryDto(repository.save(category));
     }
 
     private void validation(NewCategoryDto categoryDto) {
@@ -45,7 +43,6 @@ public class CategoryServiceAdminImpl implements CategoryServiceAdmin {
         } else if (categoryDto.getName().isBlank()) {
             throw new ValidationException("Невозможно создать категорию состоящую только из пробелов");
         }
-
     }
 }
 

@@ -1,7 +1,8 @@
-package ewm.category.public_part;
+package ewm.category.controller;
 
+import ewm.category.dto.CategoryDto;
 import ewm.category.model.Category;
-import ewm.category.public_part.service.CategoryServicePublic;
+import ewm.category.service.PublicCategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,18 +14,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryControllerPublic {
-
-    final CategoryServicePublic categoryService;
+public class PublicCategoryController {
+    final PublicCategoryService categoryService;
 
     @GetMapping
-    public List<Category> getAll(@RequestParam(defaultValue = "0") int from,
+    public List<CategoryDto> getAll(@RequestParam(defaultValue = "0") int from,
                                  @RequestParam(defaultValue = "10") int size) {
         return categoryService.getAll(from, size);
     }
 
     @GetMapping(path = "/{catId}")
-    public Category getBy(@PathVariable("catId") long catId) {
-        return categoryService.getBy(catId).get();
+    public CategoryDto getBy(@PathVariable("catId") long catId) {
+        return categoryService.getBy(catId);
     }
 }
