@@ -10,6 +10,7 @@ import lombok.ToString;
 @ToString
 public class CategoryDto {
     Long id;
+
     @Size(max = 50, min = 1)
     String name;
 }
