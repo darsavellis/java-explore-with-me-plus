@@ -1,18 +1,16 @@
 package ewm.event.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity
-@Table(name = "locations")
 @Getter
 @Setter
 @ToString
+@Embeddable
 public class Location {
-    @Id
-    Long id;
     @Column(name = "latitude")
     Float lat;
     @Column(name = "longitude")

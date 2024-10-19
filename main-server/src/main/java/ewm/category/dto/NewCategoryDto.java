@@ -1,14 +1,14 @@
 package ewm.category.dto;
 
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
 @ToString
 public class NewCategoryDto {
-    @Size(max = 50, min = 1)
+    @Length(min = 1, max = 50)
     String name;
 }

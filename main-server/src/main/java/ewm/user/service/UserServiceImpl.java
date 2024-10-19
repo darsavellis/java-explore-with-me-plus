@@ -1,6 +1,7 @@
 package ewm.user.service;
 
 import com.querydsl.core.BooleanBuilder;
+import ewm.exeption.NotFoundException;
 import ewm.user.dto.NewUserRequest;
 import ewm.user.dto.UserDto;
 import ewm.user.mappers.UserMapper;
@@ -42,5 +43,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(long userId) {
         userRepository.deleteById(userId);
+    }
+
+    public UserDto getBy(long userId) {
+        return userRepository.findById(userId)
+            .map(UserMapper::toUserDto)
+            .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
     }
 }

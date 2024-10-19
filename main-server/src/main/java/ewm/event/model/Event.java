@@ -19,7 +19,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "annotation")
+    @Column(name = "annotation", length = 2000)
     String annotation;
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -29,7 +29,7 @@ public class Event {
     @Column(name = "created_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdOn;
-    @Column(name = "description")
+    @Column(name = "description", length = 7000)
     String description;
     @Column(name = "event_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -37,7 +37,7 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     User initiator;
-    @OneToOne(mappedBy = "location_id")
+    @Embedded
     Location location;
     @Column(name = "paid")
     boolean paid;
@@ -48,9 +48,9 @@ public class Event {
     LocalDateTime publishedOn;
     @Column(name = "request_moderation")
     boolean requestModeration;
-    @Column(name = "state")
+    @Column(name = "state", length = 10)
     String state;
-    @Column(name = "title")
+    @Column(name = "title", length = 120)
     String title;
     @Column(name = "views")
     Long views;

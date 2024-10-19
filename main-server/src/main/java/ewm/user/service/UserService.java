@@ -11,4 +11,6 @@ public interface UserService {
     List<UserDto> getAll(List<Long> ids, int from, int size);
 
     void delete(long userId);
+
+    UserDto getBy(long userId);
 }
