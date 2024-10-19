@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryServicePublic {
-    List<Category> getAllCategory(Long limit);
+    List<Category> getAll(int from, int size);
 
-    Optional<Category> getCategoryById(Long id);
+    Optional<Category> getBy(long id);
 }
