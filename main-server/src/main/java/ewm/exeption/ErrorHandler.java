@@ -20,9 +20,9 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
-            ValidationException.class,
-            DataIntegrityViolationException.class,
-            DataAccessException.class
+        ValidationException.class,
+        DataIntegrityViolationException.class,
+        DataAccessException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(Exception e) {
