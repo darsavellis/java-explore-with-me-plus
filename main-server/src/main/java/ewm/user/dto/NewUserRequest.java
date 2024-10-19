@@ -1,6 +1,8 @@
 package ewm.user.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,7 +12,8 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @ToString
 public class NewUserRequest {
-    @NotBlank
+    @Email
+    @NotNull
     @Length(min = 6, max = 254)
     String email;
     @NotBlank
