@@ -12,29 +12,29 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin")
+@RequestMapping(path = "/admin/categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryControllerAdmin {
 
     final CategoryServiceAdmin serviceAdmin;
 
-    @PostMapping(path = "/categories")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto categoryDto) {
-        return serviceAdmin.addNewCategory(categoryDto);
+    public CategoryDto add(@Valid @RequestBody NewCategoryDto categoryDto) {
+        return serviceAdmin.add(categoryDto);
     }
 
-    @DeleteMapping(path = "/categories/{catID}")
+    @DeleteMapping(path = "/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable("catID") Long catId) {
-        serviceAdmin.deleteCategory(catId);
+    public void delete(@PathVariable("catId") long catId) {
+        serviceAdmin.deleteBy(catId);
     }
 
 
-    @PatchMapping("/categories/{catID}")
-    public CategoryDto updateCategory(@PathVariable("catID") Long catID,
-                                      @RequestBody NewCategoryDto newCategoryDto) {
-        return serviceAdmin.updateCategoryById(catID, newCategoryDto);
+    @PatchMapping(path = "/{catId}")
+    public CategoryDto updateBy(@PathVariable("catId") long catId,
+                                @RequestBody NewCategoryDto newCategoryDto) {
+        return serviceAdmin.updateBy(catId, newCategoryDto);
     }
 
 
