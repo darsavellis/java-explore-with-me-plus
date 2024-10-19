@@ -26,7 +26,7 @@ import java.util.List;
 public class StatRestClientImpl implements StatRestClients {
     final RestClient restClient;
 
-//    stat-server.uri
+    //    stat-server.uri
     public StatRestClientImpl(@Value("${http://localhost:9090}") String baseUri) {
         this.restClient = RestClient.builder()
             .baseUrl(baseUri)
