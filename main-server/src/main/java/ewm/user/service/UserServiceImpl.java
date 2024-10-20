@@ -1,7 +1,7 @@
 package ewm.user.service;
 
 import com.querydsl.core.BooleanBuilder;
-import ewm.exeption.NotFoundException;
+import ewm.exception.NotFoundException;
 import ewm.user.dto.NewUserRequest;
 import ewm.user.dto.UserDto;
 import ewm.user.mappers.UserMapper;
@@ -20,11 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
+    final UserMapper userMapper;
 
     @Override
     public UserDto create(NewUserRequest newUserRequest) {
-        User user = UserMapper.toUser(newUserRequest);
-        return UserMapper.toUserDto(userRepository.save(user));
+        User user = userMapper.toUser(newUserRequest);
+        return userMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Page<User> usersPage = userRepository.findAll(booleanBuilder, pageable);
-        return usersPage.map(UserMapper::toUserDto).toList();
+        return usersPage.map(userMapper::toUserDto).toList();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto getBy(long userId) {
         return userRepository.findById(userId)
-                .map(UserMapper::toUserDto)
-                .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
+            .map(userMapper::toUserDto)
+            .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
     }
 }

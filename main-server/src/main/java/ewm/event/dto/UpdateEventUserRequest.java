@@ -2,6 +2,9 @@ package ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ewm.event.model.Location;
+import ewm.event.model.StateAction;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +24,11 @@ public class UpdateEventUserRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
     Location location;
-    boolean paid;
+    Boolean paid;
+    @Positive
     Integer participantLimit;
-    boolean requestModeration;
-    String stateAction;
+    Boolean requestModeration;
+    StateAction stateAction;
     @Size(max = 120, min = 3)
     String title;
 }

@@ -1,4 +1,4 @@
-package ewm.exeption;
+package ewm.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

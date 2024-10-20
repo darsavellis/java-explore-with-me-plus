@@ -1,4 +1,4 @@
-package ewm.exceptions;
+package ewm.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -2,6 +2,7 @@ package ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ewm.category.dto.CategoryDto;
+import ewm.event.model.EventState;
 import ewm.event.model.Location;
 import ewm.user.dto.UserShortDto;
 import lombok.Getter;
@@ -25,12 +26,12 @@ public class EventFullDto {
     LocalDateTime eventDate;
     UserShortDto initiator;
     Location location;
-    boolean paid;
+    Boolean paid;
     int participantLimit;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime publishedOn;
-    boolean requestModeration;
-    String state;
+    Boolean requestModeration;
+    EventState state;
     String title;
     Long views;
 }

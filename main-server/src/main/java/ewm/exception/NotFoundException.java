@@ -1,4 +1,4 @@
-package ewm.exeption;
+package ewm.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

@@ -1,40 +1,23 @@
 package ewm.user.mappers;
 
+import ewm.category.mapper.CategoryMapper;
+import ewm.event.mappers.EventMapper;
 import ewm.user.dto.NewUserRequest;
 import ewm.user.dto.UserDto;
 import ewm.user.dto.UserShortDto;
 import ewm.user.model.User;
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-@UtilityClass
-public class UserMapper {
-    public User toUser(NewUserRequest newUserRequest) {
-        User user = new User();
-        user.setName(newUserRequest.getName());
-        user.setEmail(newUserRequest.getEmail());
-        return user;
-    }
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, EventMapper.class})
+public interface UserMapper {
+    @Mapping(target = "id", ignore = true)
+    User toUser(NewUserRequest newUserRequest);
 
-    public User toUser(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        return user;
-    }
+    User toUser(UserDto userDto);
 
-    public UserDto toUserDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-        return userDto;
-    }
+    UserDto toUserDto(User user);
 
-    public UserShortDto toUserShortDto(User user) {
-        UserShortDto userShortDto = new UserShortDto();
-        userShortDto.setId(user.getId());
-        userShortDto.setName(user.getName());
-        return userShortDto;
-    }
+    UserShortDto toUserShortDto(User user);
 }

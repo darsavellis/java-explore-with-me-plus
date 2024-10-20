@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class UpdateEventAdminRequest {
-    @Size(max = 2000, min = 20)
+    @Size(min = 20, max = 2000)
     String annotation;
     Long category;
-    @Size(max = 7000, min = 20)
+    @Size(min = 20, max = 7000)
     String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
     Location location;
-    boolean paid;
+    Boolean paid;
     Integer participantLimit;
     boolean requestModeration;
     String stateAction;

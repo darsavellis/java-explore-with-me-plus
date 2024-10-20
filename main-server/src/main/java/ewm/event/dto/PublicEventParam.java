@@ -8,7 +8,7 @@ import java.util.List;
 public class PublicEventParam {
     String text;
     List<Long> categories;
-    boolean paid;
+    Boolean paid;
     String rangeStart;
     String rangeEnd;
     boolean onlyAvailable;
