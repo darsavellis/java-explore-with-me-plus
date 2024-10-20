@@ -48,7 +48,7 @@ public class Event {
     LocalDateTime publishedOn;
     @Column(name = "request_moderation")
     boolean requestModeration;
-    @Column(name = "state", length = 10)
+    @Column(name = "state", length = 50)
     String state;
     @Column(name = "title", length = 120)
     String title;
