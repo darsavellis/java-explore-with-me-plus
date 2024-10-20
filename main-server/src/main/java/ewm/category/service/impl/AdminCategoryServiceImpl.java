@@ -30,7 +30,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Override
     public CategoryDto updateBy(long id, NewCategoryDto categoryDto) {
         Category category = repository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
+                .orElseThrow(() -> new NotFoundException("Категория не найдена"));
 
         category.setName(categoryDto.getName());
 

@@ -44,4 +44,5 @@ public class EventMapper {
         eventFullDto.setTitle(event.getTitle());
         return eventFullDto;
     }
+
 }
