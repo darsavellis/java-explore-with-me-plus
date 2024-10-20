@@ -6,8 +6,8 @@ import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
 import ewm.category.repository.CategoryRepository;
 import ewm.category.service.AdminCategoryService;
-import ewm.exeption.NotFoundException;
-import ewm.exeption.ValidationException;
+import ewm.exception.NotFoundException;
+import ewm.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +15,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminCategoryServiceImpl implements AdminCategoryService {
     final CategoryRepository repository;
+    final CategoryMapper categoryMapper;
 
     @Override
     public CategoryDto add(NewCategoryDto categoryDto) {
         validation(categoryDto);
-        return CategoryMapper.toCategoryDto(repository.save(CategoryMapper.toCategory(categoryDto)));
+        return categoryMapper.toCategoryDto(repository.save(categoryMapper.toCategory(categoryDto)));
     }
 
     @Override
@@ -34,7 +35,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
 
         category.setName(categoryDto.getName());
 
-        return CategoryMapper.toCategoryDto(repository.save(category));
+        return categoryMapper.toCategoryDto(repository.save(category));
     }
 
     private void validation(NewCategoryDto categoryDto) {

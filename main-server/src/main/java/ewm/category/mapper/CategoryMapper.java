@@ -3,37 +3,20 @@ package ewm.category.mapper;
 import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
 import ewm.category.model.Category;
-import lombok.experimental.UtilityClass;
+import ewm.event.mappers.EventMapper;
+import ewm.user.mappers.UserMapper;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-@UtilityClass
-public class CategoryMapper {
-    public CategoryDto toCategoryDto(Category category) {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(category.getId());
-        categoryDto.setName(category.getName());
+@Mapper(componentModel = "spring", uses = {UserMapper.class, EventMapper.class})
+public interface CategoryMapper {
+    CategoryDto toCategoryDto(Category category);
 
-        return categoryDto;
-    }
+    Category toCategory(CategoryDto categoryDto);
 
-    public Category toCategory(CategoryDto categoryDto) {
-        Category category = new Category();
-        category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
+    NewCategoryDto toNewCategoryDto(Category category);
 
-        return category;
-    }
-
-    public NewCategoryDto toNewCategoryDto(Category category) {
-        NewCategoryDto newCategoryDto = new NewCategoryDto();
-        newCategoryDto.setName(category.getName());
-
-        return newCategoryDto;
-    }
-
-    public Category toCategory(NewCategoryDto newCategoryDto) {
-        Category category = new Category();
-        category.setName(newCategoryDto.getName());
-
-        return category;
-    }
+    @Mapping(target = "id", ignore = true)
+    Category toCategory(NewCategoryDto newCategoryDto);
 }

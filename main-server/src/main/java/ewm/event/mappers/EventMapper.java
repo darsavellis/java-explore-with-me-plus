@@ -1,48 +1,33 @@
 package ewm.event.mappers;
 
-import ewm.category.mapper.categoryDto.CategoryDtoMapperImpl;
+import ewm.category.mapper.CategoryMapper;
+import ewm.category.model.Category;
 import ewm.event.dto.EventFullDto;
+import ewm.event.dto.EventShortDto;
 import ewm.event.dto.NewEventDto;
+import ewm.event.dto.UpdateEventUserRequest;
 import ewm.event.model.Event;
-import ewm.event.model.EventState;
 import ewm.user.mappers.UserMapper;
-import lombok.experimental.UtilityClass;
+import ewm.user.model.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import java.time.LocalDateTime;
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, StateActionMapper.class},
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public interface EventMapper {
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "initiator", source = "initiator")
+    @Mapping(target = "id", ignore = true)
+    Event toEvent(NewEventDto newEventDto, User initiator, Category category);
 
-@UtilityClass
-public class EventMapper {
-    public Event toEvent(NewEventDto newEventDto) {
-        Event event = new Event();
-        event.setAnnotation(newEventDto.getAnnotation());
-        event.setCreatedOn(LocalDateTime.now());
-        event.setDescription(newEventDto.getDescription());
-        event.setEventDate(newEventDto.getEventDate());
-        event.setLocation(newEventDto.getLocation());
-        event.setPaid(newEventDto.isPaid());
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
-        event.setRequestModeration(newEventDto.isRequestModeration());
-        event.setState(EventState.PENDING.toString());
-        event.setTitle(newEventDto.getTitle());
-        event.setViews(0L);
-        return event;
-    }
+    EventFullDto toEventFullDto(Event event);
 
-    public EventFullDto toEventFullDto(Event event) {
-        EventFullDto eventFullDto = new EventFullDto();
-        eventFullDto.setId(event.getId());
-        eventFullDto.setAnnotation(event.getAnnotation());
-        eventFullDto.setCategory(new CategoryDtoMapperImpl().toCategoryDto(event.getCategory()));
-        eventFullDto.setDescription(event.getDescription());
-        eventFullDto.setEventDate(event.getEventDate());
-        eventFullDto.setInitiator(UserMapper.toUserShortDto(event.getInitiator()));
-        eventFullDto.setLocation(event.getLocation());
-        eventFullDto.setPaid(event.isPaid());
-        eventFullDto.setParticipantLimit(event.getParticipantLimit());
-        eventFullDto.setRequestModeration(event.isRequestModeration());
-        eventFullDto.setState(event.getState());
-        eventFullDto.setTitle(event.getTitle());
-        return eventFullDto;
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "state", source = "updateEventUserRequest.stateAction")
+    Event toUpdatedEvent(@MappingTarget Event event, UpdateEventUserRequest updateEventUserRequest, Category category);
 
+    EventShortDto toEventShortDto(Event event);
 }

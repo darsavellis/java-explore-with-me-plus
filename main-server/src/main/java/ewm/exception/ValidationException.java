@@ -1,4 +1,4 @@
-package ewm.exeption;
+package ewm.exception;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {

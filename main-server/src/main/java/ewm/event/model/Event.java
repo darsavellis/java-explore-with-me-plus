@@ -28,7 +28,7 @@ public class Event {
     Long confirmedRequests;
     @Column(name = "created_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime createdOn;
+    LocalDateTime createdOn = LocalDateTime.now();
     @Column(name = "description", length = 7000)
     String description;
     @Column(name = "event_date")
@@ -40,16 +40,17 @@ public class Event {
     @Embedded
     Location location;
     @Column(name = "paid")
-    boolean paid;
+    Boolean paid;
     @Column(name = "participant_limit")
     int participantLimit;
     @Column(name = "published_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime publishedOn;
     @Column(name = "request_moderation")
-    boolean requestModeration;
+    Boolean requestModeration;
+    @Enumerated
     @Column(name = "state", length = 50)
-    String state;
+    EventState state = EventState.PENDING;
     @Column(name = "title", length = 120)
     String title;
     @Column(name = "views")
