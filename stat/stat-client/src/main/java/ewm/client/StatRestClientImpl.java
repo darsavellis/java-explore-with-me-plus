@@ -23,11 +23,10 @@ import java.util.List;
 @Slf4j
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatRestClientImpl implements StatRestClients {
+public class StatRestClientImpl implements StatRestClient {
     final RestClient restClient;
 
-    //    stat-server.uri
-    public StatRestClientImpl(@Value("${http://localhost:9090}") String baseUri) {
+    public StatRestClientImpl(@Value("${stat-server.uri}") String baseUri) {
         this.restClient = RestClient.builder()
             .baseUrl(baseUri)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

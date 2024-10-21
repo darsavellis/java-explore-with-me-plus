@@ -66,21 +66,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException("Событие не найдено"));
+            .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
         if (event.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
         Category category = categoryMapper.toCategory(categoryService.getBy(event.getCategory().getId()));
         return eventMapper.toEventFullDto(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));
-    }
-
-    @Override
-    public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
-        return List.of();
-    }
-
-    @Override
-    public EventRequestStatusUpdateResult updateRequests(long userId, long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
-        return null;
     }
 }
