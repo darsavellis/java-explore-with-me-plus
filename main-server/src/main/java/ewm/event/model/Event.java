@@ -40,15 +40,15 @@ public class Event {
     @Embedded
     Location location;
     @Column(name = "paid")
-    Boolean paid;
+    boolean paid;
     @Column(name = "participant_limit")
     int participantLimit;
     @Column(name = "published_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime publishedOn;
     @Column(name = "request_moderation")
-    Boolean requestModeration;
-    @Enumerated
+    boolean requestModeration;
+    @Enumerated(EnumType.STRING)
     @Column(name = "state", length = 50)
     EventState state = EventState.PENDING;
     @Column(name = "title", length = 120)
