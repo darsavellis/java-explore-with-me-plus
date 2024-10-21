@@ -37,7 +37,7 @@ public class ErrorHandler {
             .build();
     }
 
-    @ExceptionHandler({ValidationException.class, DataAccessException.class})
+    @ExceptionHandler({ValidationException.class, DataAccessException.class, WrongSortMethodException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
