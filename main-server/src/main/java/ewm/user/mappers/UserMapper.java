@@ -8,7 +8,6 @@ import ewm.user.dto.UserShortDto;
 import ewm.user.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class, EventMapper.class})
 public interface UserMapper {

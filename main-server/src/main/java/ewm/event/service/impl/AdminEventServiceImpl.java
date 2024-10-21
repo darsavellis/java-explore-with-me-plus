@@ -5,7 +5,6 @@ import com.querydsl.core.BooleanBuilder;
 import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
 import ewm.category.service.PublicCategoryService;
-import ewm.client.StatRestClientImpl;
 import ewm.event.dto.AdminEventParam;
 import ewm.event.dto.EventFullDto;
 import ewm.event.dto.UpdateEventAdminRequest;

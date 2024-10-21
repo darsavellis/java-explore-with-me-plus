@@ -7,7 +7,6 @@ import ewm.event.mappers.EventMapper;
 import ewm.user.mappers.UserMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, EventMapper.class})
 public interface CategoryMapper {
