@@ -4,8 +4,10 @@ import ewm.event.dto.AdminEventParam;
 import ewm.event.dto.EventFullDto;
 import ewm.event.dto.UpdateEventAdminRequest;
 import ewm.event.service.AdminEventService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +20,14 @@ public class AdminEventController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventFullDto> getAllBy(@ModelAttribute AdminEventParam adminEventParam) {
+
+    public List<EventFullDto> getAllBy(@Validated @ModelAttribute AdminEventParam adminEventParam) {
         return adminEventService.getAllBy(adminEventParam);
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateBy(@PathVariable("eventId") long eventId, @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+    public EventFullDto updateBy(@PathVariable("eventId") long eventId,
+                                 @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
         return adminEventService.updateBy(eventId, updateEventAdminRequest);
     }
-
 }

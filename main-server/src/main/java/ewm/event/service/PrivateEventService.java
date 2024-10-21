@@ -20,9 +20,4 @@ public interface PrivateEventService {
     EventFullDto getBy(long userId, long eventId);
 
     EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest);
-
-    List<ParticipationRequestDto> getRequests(long userId, long eventId);
-
-    EventRequestStatusUpdateResult updateRequests(long userId, long eventId,
-                                                  EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest);
 }
