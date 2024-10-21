@@ -38,7 +38,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public List<EventShortDto> getAllBy(long userId, PageRequest page) {
         return eventRepository.findAllByInitiatorId(userId, page)
-                .map(eventMapper::toEventShortDto).getContent();
+            .map(eventMapper::toEventShortDto).getContent();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
-                .orElseThrow(() -> new NotFoundException("Событие не найдено"));
+            .orElseThrow(() -> new NotFoundException("Событие не найдено"));
         if (eventFullDto.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
@@ -63,7 +63,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
+            .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
         if (event.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
         }
