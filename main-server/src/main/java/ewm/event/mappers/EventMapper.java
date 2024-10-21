@@ -4,7 +4,6 @@ import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
 import ewm.event.dto.*;
 import ewm.event.model.Event;
-import ewm.event.model.EventState;
 import ewm.user.mappers.UserMapper;
 import ewm.user.model.User;
 import org.mapstruct.Mapper;
