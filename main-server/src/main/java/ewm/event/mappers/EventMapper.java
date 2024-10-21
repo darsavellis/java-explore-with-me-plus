@@ -3,7 +3,6 @@ package ewm.event.mappers;
 import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
 import ewm.event.dto.*;
-import ewm.event.model.AdminStateAction;
 import ewm.event.model.Event;
 import ewm.user.mappers.UserMapper;
 import ewm.user.model.User;
@@ -11,7 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class, UserMapper.class, StateActionMapper.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
