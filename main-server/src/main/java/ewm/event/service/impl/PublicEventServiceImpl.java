@@ -33,6 +33,7 @@ import java.util.Map;
 public class PublicEventServiceImpl implements PublicEventService {
     private final EventRepository eventRepository;
     private final StatRestClientImpl statRestClient;
+    private final EventMapper eventMapper;
 
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -46,13 +47,13 @@ public class PublicEventServiceImpl implements PublicEventService {
             publicEventParam.setSize(10);
 
         Pageable pageable = PageRequest.of(publicEventParam.getFrom(),
-                publicEventParam.getSize());
+            publicEventParam.getSize());
 
         if (publicEventParam.getSort() != null) {
             switch (publicEventParam.getSort()) {
                 case "EVENT_DATE":
                     pageable = PageRequest.of(publicEventParam.getFrom(),
-                            publicEventParam.getSize(), new QSort(QEvent.event.eventDate.asc()));
+                        publicEventParam.getSize(), new QSort(QEvent.event.eventDate.asc()));
                     break;
                 case "VIEWS":
                     //TODO: Сделать сортировку по количеству просмотров
@@ -61,9 +62,10 @@ public class PublicEventServiceImpl implements PublicEventService {
                     throw new NotFoundException("Метод сортировки не найден");
             }
         }
+
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        booleanBuilder.and(QEvent.event.state.eq(EventState.PUBLISHED.toString()));
+        booleanBuilder.and(QEvent.event.state.eq(EventState.PUBLISHED));
 
         if (publicEventParam.getText() != null && !publicEventParam.getText().isEmpty()) {
             booleanBuilder.and(QEvent.event.annotation.containsIgnoreCase(publicEventParam.getText()));
@@ -74,8 +76,7 @@ public class PublicEventServiceImpl implements PublicEventService {
             booleanBuilder.and(QEvent.event.category.id.in(publicEventParam.getCategories()));
         }
 
-        booleanBuilder.and(QEvent.event.paid.eq(publicEventParam.isPaid()));
-
+        booleanBuilder.and(QEvent.event.paid.eq(publicEventParam.getPaid()));
 
         LocalDateTime rangeStart;
         LocalDateTime rangeEnd;
@@ -86,9 +87,9 @@ public class PublicEventServiceImpl implements PublicEventService {
             rangeEnd = LocalDateTime.parse(publicEventParam.getRangeEnd(), dateTimeFormatter);
 
             booleanBuilder.and(QEvent.event.eventDate
-                    .after(rangeStart));
+                .after(rangeStart));
             booleanBuilder.and(QEvent.event.eventDate
-                    .before(rangeEnd));
+                .before(rangeEnd));
         } else {
             rangeStart = LocalDateTime.MIN;
             rangeEnd = LocalDateTime.MAX;
@@ -104,7 +105,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         }
 
         List<ViewStatsDto> stats = statRestClient.stats(rangeStart, rangeEnd,
-                urisAndViews.keySet().stream().toList(), false);
+            urisAndViews.keySet().stream().toList(), false);
 
         for (ViewStatsDto stat : stats) {
             urisAndViews.put(stat.getUri(), stat.getHits());
@@ -112,9 +113,9 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         addHit("main-server", "/events", request.getRemoteAddr());
 
-        return eventsPage.stream().map(EventMapper::toEventShortDto)
-                .peek(eventShortDto -> eventShortDto.setViews(urisAndViews.get("/events/" + eventShortDto.getId())))
-                .toList();
+        return eventsPage.stream().map(eventMapper::toEventShortDto)
+            .peek(eventShortDto -> eventShortDto.setViews(urisAndViews.get("/events/" + eventShortDto.getId())))
+            .toList();
 
     }
 
@@ -122,16 +123,15 @@ public class PublicEventServiceImpl implements PublicEventService {
     public EventFullDto getBy(long eventId, HttpServletRequest request) {
         addHit("main-server", "/events/" + eventId, request.getRemoteAddr());
         return eventRepository.findById(eventId)
-                .map(EventMapper::toEventFullDto)
-                .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
+            .map(eventMapper::toEventFullDto)
+            .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
     }
 
     private void addHit(String application, String uri, String ip) {
         LocalDateTime now = LocalDateTime.now();
         EndpointHitDto hitDto = new EndpointHitDto(application,
-                uri, ip, now.format(dateTimeFormatter));
+            uri, ip, now.format(dateTimeFormatter));
         statRestClient.addHit(hitDto);
-
     }
 
 }

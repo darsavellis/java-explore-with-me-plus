@@ -37,15 +37,15 @@ public class AdminEventServiceImpl implements AdminEventService {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         Optional.ofNullable(eventParam.getUsers())
-            .ifPresent(userIds -> booleanBuilder.and(event.initiator.id.in(userIds)));
+                .ifPresent(userIds -> booleanBuilder.and(event.initiator.id.in(userIds)));
         Optional.ofNullable(eventParam.getStates())
-            .ifPresent(userStates -> booleanBuilder.and(event.state.in(userStates)));
+                .ifPresent(userStates -> booleanBuilder.and(event.state.in(userStates)));
         Optional.ofNullable(eventParam.getCategories())
-            .ifPresent(categoryIds -> booleanBuilder.and(event.category.id.in(categoryIds)));
+                .ifPresent(categoryIds -> booleanBuilder.and(event.category.id.in(categoryIds)));
         Optional.ofNullable(eventParam.getRangeStart())
-            .ifPresent(rangeStart -> booleanBuilder.and(event.eventDate.after(rangeStart)));
+                .ifPresent(rangeStart -> booleanBuilder.and(event.eventDate.after(rangeStart)));
         Optional.ofNullable(eventParam.getRangeEnd())
-            .ifPresent(rangeEnd -> booleanBuilder.and(event.eventDate.before(rangeEnd)));
+                .ifPresent(rangeEnd -> booleanBuilder.and(event.eventDate.before(rangeEnd)));
 
         return eventRepository.findAll(booleanBuilder, pageable).map(eventMapper::toEventFullDto).toList();
     }
@@ -53,7 +53,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Override
     public EventFullDto updateBy(long eventId, UpdateEventAdminRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
+                .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
         Category category = categoryMapper.toCategory(categoryService.getBy(event.getCategory().getId()));
         eventRepository.save(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));
         return eventMapper.toEventFullDto(event);
