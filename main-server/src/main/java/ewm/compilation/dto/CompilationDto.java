@@ -1,5 +1,6 @@
 package ewm.compilation.dto;
 
+import ewm.event.model.Event;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,7 +12,7 @@ import java.util.List;
 @ToString
 public class CompilationDto {
     Long id;
-    List<Long> events;
+    List<Event> events;
     boolean pinned;
     String title;
 }

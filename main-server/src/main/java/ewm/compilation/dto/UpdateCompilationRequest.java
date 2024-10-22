@@ -1,5 +1,6 @@
 package ewm.compilation.dto;
 
+import ewm.event.model.Event;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.util.List;
 @Setter
 @ToString
 public class UpdateCompilationRequest {
-    List<Long> events;
+    List<Event> events;
     boolean pinned;
     @Size(max = 50, min = 1)
     String title;
