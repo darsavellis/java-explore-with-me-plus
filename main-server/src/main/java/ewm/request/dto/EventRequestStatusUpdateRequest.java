@@ -1,5 +1,6 @@
 package ewm.request.dto;
 
+import ewm.request.model.RequestStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,6 +11,6 @@ import java.util.List;
 @Setter
 @ToString
 public class EventRequestStatusUpdateRequest {
-    List<Long> requestsIds;
-    String status;
+    List<Long> requestIds;
+    RequestStatus status;
 }
