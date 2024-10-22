@@ -27,7 +27,7 @@ public class CompilationController {
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getBy(@PositiveOrZero @PathVariable(required = true)  long compId) {
+    public CompilationDto getBy(@PositiveOrZero @PathVariable(required = true) long compId) {
         return compilationService.getBy(compId);
     }
 
