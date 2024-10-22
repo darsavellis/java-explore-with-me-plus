@@ -14,6 +14,7 @@ import ewm.event.model.QEvent;
 import ewm.event.repository.EventRepository;
 import ewm.event.service.PublicEventService;
 import ewm.exception.NotFoundException;
+import ewm.exception.PermissionException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -122,9 +123,12 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Override
     public EventFullDto getBy(long eventId, HttpServletRequest request) {
         addHit("main-server", "/events/" + eventId, request.getRemoteAddr());
-        return eventRepository.findById(eventId)
-            .map(eventMapper::toEventFullDto)
+        Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new NotFoundException("");
+        }
+        return eventMapper.toEventFullDto(event);
     }
 
     private void addHit(String application, String uri, String ip) {

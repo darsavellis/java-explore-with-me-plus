@@ -6,6 +6,7 @@ import ewm.event.dto.PublicEventParam;
 import ewm.event.service.PublicEventService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
