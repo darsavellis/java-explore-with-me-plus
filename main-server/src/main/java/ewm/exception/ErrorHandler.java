@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -33,12 +34,13 @@ public class ErrorHandler {
             .errors(errors)
             .message(exception.getMessage())
             .reason(cause)
-            .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+            .status(HttpStatus.BAD_REQUEST.toString())
             .timestamp(LocalDateTime.now())
             .build();
     }
 
-    @ExceptionHandler({ValidationException.class, DataAccessException.class, WrongSortMethodException.class})
+    @ExceptionHandler({ValidationException.class, DataAccessException.class, WrongSortMethodException.class,
+            HandlerMethodValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
