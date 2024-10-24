@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto getBy(long userId) {
         return userRepository.findById(userId)
-            .map(userMapper::toUserDto)
-            .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
+                .map(userMapper::toUserDto)
+                .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
     }
 }

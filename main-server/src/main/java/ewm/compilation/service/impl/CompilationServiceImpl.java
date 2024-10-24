@@ -1,4 +1,4 @@
-package ewm.compilation.service;
+package ewm.compilation.service.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import ewm.compilation.dto.CompilationDto;
@@ -6,7 +6,7 @@ import ewm.compilation.mappers.CompilationMapper;
 import ewm.compilation.model.Compilation;
 import ewm.compilation.model.QCompilation;
 import ewm.compilation.repository.CompilationRepository;
-import ewm.compilation.service.impl.CompilationService;
+import ewm.compilation.service.CompilationService;
 import ewm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

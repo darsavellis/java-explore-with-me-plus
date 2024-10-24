@@ -1,4 +1,4 @@
-package ewm.compilation.service.impl;
+package ewm.compilation.service;
 
 import ewm.compilation.dto.CompilationDto;
 
