@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class,
-        ConstraintViolationException.class, WebExchangeBindException.class})
+        ConstraintViolationException.class, WebExchangeBindException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentValidException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
@@ -55,9 +56,9 @@ public class ErrorHandler {
             .build();
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+    public ApiError handleDataIntegrityViolationException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         exception.printStackTrace(printWriter);

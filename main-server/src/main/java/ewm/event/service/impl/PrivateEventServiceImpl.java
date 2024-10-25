@@ -9,10 +9,12 @@ import ewm.event.dto.NewEventDto;
 import ewm.event.dto.UpdateEventUserRequest;
 import ewm.event.mappers.EventMapper;
 import ewm.event.model.Event;
+import ewm.event.model.EventState;
 import ewm.event.repository.EventRepository;
 import ewm.event.service.PrivateEventService;
 import ewm.exception.NotFoundException;
 import ewm.exception.PermissionException;
+import ewm.exception.ValidationException;
 import ewm.user.mappers.UserMapper;
 import ewm.user.model.User;
 import ewm.user.service.UserService;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,12 +39,14 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final EventMapper eventMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(long userId, PageRequest page) {
         return eventRepository.findAllByInitiatorId(userId, page)
             .map(eventMapper::toEventShortDto).getContent();
     }
 
     @Override
+    @Transactional
     public EventFullDto create(long userId, NewEventDto newEventDto) {
         User initiator = userMapper.toUser(userService.getBy(userId));
         Category category = categoryMapper.toCategory(categoryService.getBy(newEventDto.getCategory()));
@@ -51,6 +56,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
             .orElseThrow(() -> new NotFoundException("Событие не найдено"));
@@ -61,11 +67,15 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateBy(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException("Событие с с id = " + eventId + " не найдено"));
         if (event.getInitiator().getId() != userId) {
             throw new PermissionException("Доступ запрещен");
+        }
+        if (event.getState().equals(EventState.PUBLISHED)) {
+            throw new ValidationException("Нельзя отменить событие с состоянием");
         }
         Category category = categoryMapper.toCategory(categoryService.getBy(event.getCategory().getId()));
         return eventMapper.toEventFullDto(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));

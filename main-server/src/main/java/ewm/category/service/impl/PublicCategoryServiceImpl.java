@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     final CategoryMapper categoryMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAll(int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
 
@@ -26,6 +28,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getBy(long id) {
         return categoryRepository.findById(id).map(categoryMapper::toCategoryDto)
             .orElseThrow(() -> new NotFoundException("Категория с id = " + id + " не найдена"));
