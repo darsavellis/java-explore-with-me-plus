@@ -10,6 +10,7 @@ import ewm.exception.NotFoundException;
 import ewm.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,17 +19,20 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     final CategoryMapper categoryMapper;
 
     @Override
+    @Transactional
     public CategoryDto add(NewCategoryDto categoryDto) {
         validation(categoryDto);
         return categoryMapper.toCategoryDto(repository.save(categoryMapper.toCategory(categoryDto)));
     }
 
     @Override
+    @Transactional
     public void deleteBy(long id) {
         repository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public CategoryDto updateBy(long id, NewCategoryDto categoryDto) {
         Category category = repository.findById(id)
             .orElseThrow(() -> new NotFoundException("Категория не найдена"));

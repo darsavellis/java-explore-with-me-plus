@@ -1,7 +1,6 @@
 package ewm.event.repository;
 
 import ewm.event.model.Event;
-import ewm.event.model.EventState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;

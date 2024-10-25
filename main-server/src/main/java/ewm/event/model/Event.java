@@ -21,7 +21,7 @@ public class Event {
     Long id;
     @Column(name = "annotation", length = 2000)
     String annotation;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     Category category;
     @Column(name = "confirmed_requests")
@@ -34,7 +34,7 @@ public class Event {
     @Column(name = "event_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "initiator_id")
     User initiator;
     @Embedded
@@ -54,5 +54,5 @@ public class Event {
     @Column(name = "title", length = 120)
     String title;
     @Column(name = "views")
-    Long views;
+    Long views = 0L;
 }
