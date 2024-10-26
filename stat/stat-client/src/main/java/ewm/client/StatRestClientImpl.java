@@ -28,10 +28,10 @@ public class StatRestClientImpl implements StatRestClient {
 
     public StatRestClientImpl(@Value("${stat-server.uri}") String baseUri) {
         this.restClient = RestClient.builder()
-                .baseUrl(baseUri)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .requestFactory(customRequestFactory())
-                .build();
+            .baseUrl(baseUri)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .requestFactory(customRequestFactory())
+            .build();
     }
 
     public void addHit(EndpointHitDto hitDto) {
@@ -45,16 +45,16 @@ public class StatRestClientImpl implements StatRestClient {
     public List<ViewStatsDto> stats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         try {
             return restClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/stats")
-                            .queryParam("start", start)
-                            .queryParam("end", end)
-                            .queryParam("uris", String.join(",", uris))
-                            .queryParam("unique", unique)
-                            .build())
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<>() {
-                    });
+                .uri(uriBuilder -> uriBuilder
+                    .path("/stats")
+                    .queryParam("start", start)
+                    .queryParam("end", end)
+                    .queryParam("uris", String.join(",", uris))
+                    .queryParam("unique", unique)
+                    .build())
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {
+                });
         } catch (Exception e) {
             log.info("Ошибка при запросе к эндпоинту /stats {}", e.getMessage());
             return Collections.emptyList();
@@ -63,8 +63,8 @@ public class StatRestClientImpl implements StatRestClient {
 
     private ClientHttpRequestFactory customRequestFactory() {
         ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
-                .withConnectTimeout(Duration.ofSeconds(10))
-                .withReadTimeout(Duration.ofSeconds(10));
+            .withConnectTimeout(Duration.ofSeconds(10))
+            .withReadTimeout(Duration.ofSeconds(10));
         return ClientHttpRequestFactories.get(settings);
     }
 }
