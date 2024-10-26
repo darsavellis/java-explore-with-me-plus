@@ -24,9 +24,9 @@ public interface CompilationMapper {
     @Mapping(target = "pinned", source = "compilationDto.pinned")
     @Mapping(target = "events", source = "events")
     Compilation toUpdateCompilation(
-            @MappingTarget Compilation compilation,
-            UpdateCompilationRequest compilationDto,
-            List<Event> events
+        @MappingTarget Compilation compilation,
+        UpdateCompilationRequest compilationDto,
+        List<Event> events
     );
 
     @Mapping(target = "events", source = "events")

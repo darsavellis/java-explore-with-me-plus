@@ -30,6 +30,6 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     @Transactional(readOnly = true)
     public CategoryDto getBy(long id) {
         return categoryRepository.findById(id).map(categoryMapper::toCategoryDto)
-                .orElseThrow(() -> new NotFoundException("Категория с id = " + id + " не найдена"));
+            .orElseThrow(() -> new NotFoundException("Категория с id = " + id + " не найдена"));
     }
 }

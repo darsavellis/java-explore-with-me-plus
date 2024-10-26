@@ -36,7 +36,7 @@ public class CompilationServiceAdminImpl implements CompilationServiceAdmin {
 
         List<Event> events = eventRepository.findByIdList(compilationDto.getEvents());
         return compilationMapper.toCompilationDto(repository
-                .save(compilationMapper.toCompilation(compilationDto, events)));
+            .save(compilationMapper.toCompilation(compilationDto, events)));
     }
 
     @Override
@@ -47,10 +47,10 @@ public class CompilationServiceAdminImpl implements CompilationServiceAdmin {
     @Override
     public CompilationDto updateBy(long id, UpdateCompilationRequest compilationDto) {
         Compilation compilation = repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Событие с id = " + id + " не найдено"));
+            .orElseThrow(() -> new NotFoundException("Событие с id = " + id + " не найдено"));
 
         List<Event> events = eventRepository.findByIdList(compilationDto.getEvents());
         return compilationMapper.toCompilationDto(repository
-                .save(compilationMapper.toUpdateCompilation(compilation, compilationDto, events)));
+            .save(compilationMapper.toUpdateCompilation(compilation, compilationDto, events)));
     }
 }
