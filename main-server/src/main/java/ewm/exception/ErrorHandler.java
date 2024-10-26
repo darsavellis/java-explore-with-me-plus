@@ -31,16 +31,16 @@ public class ErrorHandler {
         String cause = "Ошибка при вводе значений";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-                .errors(errors)
-                .message(exception.getMessage())
-                .reason(cause)
-                .status(HttpStatus.BAD_REQUEST.toString())
-                .timestamp(LocalDateTime.now())
-                .build();
+            .errors(errors)
+            .message(exception.getMessage())
+            .reason(cause)
+            .status(HttpStatus.BAD_REQUEST.toString())
+            .timestamp(LocalDateTime.now())
+            .build();
     }
 
     @ExceptionHandler({ValidationException.class, DataAccessException.class, WrongSortMethodException.class,
-            HandlerMethodValidationException.class})
+        HandlerMethodValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(Exception exception) {
         StringWriter stringWriter = new StringWriter();
@@ -50,12 +50,12 @@ public class ErrorHandler {
         String cause = "Ошибка при валидации данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-                .errors(errors)
-                .message(exception.getMessage())
-                .reason(cause)
-                .status(HttpStatus.BAD_REQUEST.toString())
-                .timestamp(LocalDateTime.now())
-                .build();
+            .errors(errors)
+            .message(exception.getMessage())
+            .reason(cause)
+            .status(HttpStatus.BAD_REQUEST.toString())
+            .timestamp(LocalDateTime.now())
+            .build();
     }
 
     @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})

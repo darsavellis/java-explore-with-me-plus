@@ -30,8 +30,8 @@ public class CompilationServiceImpl implements CompilationService {
             booleanBuilder.and(QCompilation.compilation.pinned.eq(pinned));
         }
         return compilationRepository.findAll(booleanBuilder, pageable).stream()
-                .map(compilationMapper::toCompilationDto)
-                .toList();
+            .map(compilationMapper::toCompilationDto)
+            .toList();
     }
 
     @Override
