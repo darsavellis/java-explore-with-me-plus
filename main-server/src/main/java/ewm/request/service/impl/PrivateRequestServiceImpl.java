@@ -2,6 +2,7 @@ package ewm.request.service.impl;
 
 import ewm.event.model.Event;
 import ewm.event.repository.EventRepository;
+import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.request.dto.EventRequestStatusUpdateRequest;
 import ewm.request.dto.EventRequestStatusUpdateResult;
@@ -40,7 +41,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public EventRequestStatusUpdateResult update(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
         User initiator = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("Пользователь с Id = " + userId + " не найден"));
@@ -48,9 +49,12 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
             .orElseThrow(() -> new NotFoundException("Событие с Id = " + eventId + " не найден"));
 
         List<Long> requestsIds = updateRequest.getRequestIds();
+        long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
         List<ParticipationRequest> requests = requestRepository.findAllByIdInAndEventIdIs(requestsIds, eventId);
-        long limit = event.getParticipantLimit() - event.getConfirmedRequests();
-
+        long limit = event.getParticipantLimit() - confirmedRequests;
+        if (limit == 0) {
+            throw new ConflictException("Количество подтвержденных запросов исчерпано: " + confirmedRequests);
+        }
         if (requests.size() != updateRequest.getRequestIds().size()) {
             throw new IllegalArgumentException("Не все запросы были найдены. Ошибка при вводе Ids");
         }
@@ -63,6 +67,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                     ParticipationRequest request = requests.removeFirst();
                     if (request.getStatus().equals(RequestStatus.PENDING)) {
                         request.setStatus(RequestStatus.CONFIRMED);
+                        requestRepository.save(request);
                         confirmed.add(request);
                     }
                 }
