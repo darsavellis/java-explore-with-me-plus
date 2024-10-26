@@ -12,6 +12,7 @@ import ewm.event.model.Event;
 import ewm.event.model.EventState;
 import ewm.event.repository.EventRepository;
 import ewm.event.service.PrivateEventService;
+import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.exception.PermissionException;
 import ewm.exception.ValidationException;
@@ -75,7 +76,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             throw new PermissionException("Доступ запрещен");
         }
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new ValidationException("Нельзя отменить событие с состоянием");
+            throw new ConflictException("Нельзя отменить событие с состоянием");
         }
         Category category = categoryMapper.toCategory(categoryService.getBy(event.getCategory().getId()));
         return eventMapper.toEventFullDto(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));

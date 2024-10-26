@@ -25,7 +25,7 @@ public class UpdateEventRequest {
     Boolean paid;
     @Positive
     Integer participantLimit;
-    boolean requestModeration;
+    Boolean requestModeration;
     @Size(min = 3, max = 120)
     String title;
 

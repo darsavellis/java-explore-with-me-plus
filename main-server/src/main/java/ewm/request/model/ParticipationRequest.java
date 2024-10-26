@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "requests")
+@Table(name = "requests", uniqueConstraints = @UniqueConstraint(columnNames = {"requester_id", "event_id"}))
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(name = "created")
     LocalDateTime created;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id")
@@ -26,5 +27,6 @@ public class ParticipationRequest {
     @JoinColumn(name = "requester_id")
     User requester;
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 100)
     RequestStatus status = RequestStatus.PENDING;
 }

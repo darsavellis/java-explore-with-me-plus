@@ -99,7 +99,9 @@ public class PublicEventServiceImpl implements PublicEventService {
 
         List<ViewStatsDto> viewStatsDtos = statRestClient
             .stats(event.getCreatedOn(), LocalDateTime.now(), List.of("/events/" + eventId), true);
-        long confirmedRequests = requestRepository.countAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+
+        long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
+
         event.setConfirmedRequests(confirmedRequests);
 
         viewStatsDtos.forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));

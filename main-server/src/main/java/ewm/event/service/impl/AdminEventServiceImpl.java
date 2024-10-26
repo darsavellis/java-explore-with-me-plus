@@ -64,6 +64,10 @@ public class AdminEventServiceImpl implements AdminEventService {
             throw new ConflictException("Событие" + event.getId() + "уже опубликовано");
         }
 
+        if (event.getState().equals(EventState.CANCELED)) {
+            throw new ConflictException("Нельзя опубликовать отмененное событие");
+        }
+
         Category category = event.getCategory();
         eventRepository.save(eventMapper.toUpdatedEvent(event, updateEventUserRequest, category));
         return eventMapper.toEventFullDto(event);
