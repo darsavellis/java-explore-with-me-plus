@@ -1,7 +1,7 @@
 package ewm.event.dto;
 
 import ewm.event.model.AdminStateAction;
-import ewm.valid.EventDateInOneHour;
+import ewm.validation.EventDateInOneHour;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
