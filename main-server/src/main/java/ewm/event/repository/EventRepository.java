@@ -15,4 +15,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
 
     @Query("SELECT e FROM Event e WHERE e.id IN :ids")
     List<Event> findByIdList(@Param("ids") List<Long> ids);
+
+    boolean existsByCategoryId(long categoryId);
 }

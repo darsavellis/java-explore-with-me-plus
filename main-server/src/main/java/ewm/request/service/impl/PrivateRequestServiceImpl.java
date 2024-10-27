@@ -34,7 +34,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ParticipationRequestDto> getReceivedBy(long userId, long eventId) {
         return requestRepository.findAllByEventIdAndEventInitiatorId(eventId, userId).stream()
             .map(requestMapper::toParticipantRequestDto).toList();

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,10 +25,16 @@ public class StatServiceImpl implements StatService {
     final EndPointHitMapper hitMapper;
 
     @Override
+    @Transactional
     public void hit(EndpointHitDto endpointHitDto) {
         log.info("Запись {} в БД", endpointHitDto);
         EndpointHit endpointHit = hitMapper.mapToEndpointHit(endpointHitDto);
+        hitRepository.deleteAll();
         hitRepository.save(endpointHit);
+        hitRepository.flush();
+        log.info("Сохраненные данные: {}", hitRepository.findAll());
+        log.info("Через статистику {}", stats(new RequestParamDto(LocalDateTime.now().minusYears(10), LocalDateTime.now().plusYears(10), List.of(endpointHitDto.getUri()), true)));
+        log.info("Через статистику {}", stats(new RequestParamDto(LocalDateTime.now().minusYears(10), LocalDateTime.now().plusYears(10), List.of(endpointHitDto.getUri()), true)));
         log.info("Объект {} успешно сохранен в БД", endpointHit);
     }
 

@@ -27,10 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,12 +42,51 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventShortDto> getAllBy(PublicEventParam eventParam, HttpServletRequest request) {
         QEvent qEvent = QEvent.event;
+        QSort qSort = new QSort(QEvent.event.views.asc());
+        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize(), qSort);
+
+        BooleanBuilder booleanBuilder = buildExpression(eventParam, qEvent);
+
+        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).stream().toList();
+
+        Map<Long, Long> requestCountMap = requestRepository.findAllByEventIdInAndStatusIs(
+            events.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED
+        ).stream().collect(Collectors.groupingBy(req -> req.getEvent().getId(), Collectors.counting()));
+
+        Set<String> uris = events.stream()
+            .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
+
+        LocalDateTime start = events
+            .stream()
+            .min(Comparator.comparing(Event::getEventDate))
+            .orElseThrow()
+            .getEventDate();
+
+        Map<String, Long> viewMap = statRestClient
+            .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
+            .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
+
+        addHit("/events", request.getRemoteAddr());
+
+        events.forEach(shortDto -> {
+            shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
+            shortDto.setConfirmedRequests(requestCountMap.getOrDefault(shortDto.getId(), 0L));
+        });
+
+        if (eventParam.getSort() != null && eventParam.getSort().equalsIgnoreCase("viewMap")) {
+            pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize(),
+                new QSort(qEvent.views.asc()));
+        }
+
+        return eventRepository.findAll(booleanBuilder, pageable).map(eventMapper::toEventShortDto).toList();
+    }
+
+    private BooleanBuilder buildExpression(PublicEventParam eventParam, QEvent qEvent) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize(),
-            new QSort(qEvent.eventDate.asc()));
+
         booleanBuilder.and(qEvent.state.eq(EventState.PUBLISHED));
         Optional.ofNullable(eventParam.getRangeStart())
             .ifPresent(rangeStart -> booleanBuilder.and(qEvent.eventDate.after(rangeStart)));
@@ -65,47 +102,31 @@ public class PublicEventServiceImpl implements PublicEventService {
                 booleanBuilder.and(qEvent.annotation.containsIgnoreCase(text));
                 booleanBuilder.or(qEvent.description.containsIgnoreCase(text));
             });
-
-        Optional.ofNullable(eventParam.getSort())
-            .filter(s -> !s.equalsIgnoreCase("EVENT_DATE"))
-            .ifPresent(s -> {
-                //TODO: Сделать сортировку по количеству просмотров
-            });
-
-        Map<String, Long> urisAndViews = new HashMap<>();
-        List<Event> eventsPage = eventRepository.findAll(booleanBuilder, pageable)
-            .stream().peek(event -> urisAndViews.put("/events/" + event.getId(), null)).toList();
-        statRestClient
-            .stats(eventParam.getRangeStart(), eventParam.getRangeEnd(), urisAndViews.keySet().stream().toList(), false)
-            .forEach(stat -> urisAndViews.put(stat.getUri(), stat.getHits()));
-        addHit("/events", request.getRemoteAddr());
-
-        return eventsPage.stream()
-            .map(eventMapper::toEventShortDto)
-            .peek(eventShortDto -> eventShortDto.setViews(urisAndViews.get("/events/" + eventShortDto.getId())))
-            .toList();
+        return booleanBuilder;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public EventFullDto getBy(long eventId, HttpServletRequest request) throws InterruptedException {
-        addHit("/events/" + eventId, request.getRemoteAddr());
         Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new NotFoundException("Событие не опубликовано");
+            throw new NotFoundException("Событие id = " + eventId + " не опубликовано");
         }
 
-        List<ViewStatsDto> viewStatsDtos = statRestClient
-            .stats(event.getCreatedOn(), LocalDateTime.now(), List.of("/events/" + eventId), true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = now.minusYears(10);
+
+        statRestClient.stats(start, now, List.of("/events/" + eventId), true)
+            .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
 
         long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
-
         event.setConfirmedRequests(confirmedRequests);
 
-        viewStatsDtos.forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
+        eventRepository.save(event);
 
+        addHit("/events/" + eventId, request.getRemoteAddr());
         return eventMapper.toEventFullDto(event);
     }
 
