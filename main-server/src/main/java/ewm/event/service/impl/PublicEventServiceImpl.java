@@ -127,6 +127,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         eventRepository.save(event);
 
         addHit("/events/" + eventId, request.getRemoteAddr());
+
         return eventMapper.toEventFullDto(event);
     }
 

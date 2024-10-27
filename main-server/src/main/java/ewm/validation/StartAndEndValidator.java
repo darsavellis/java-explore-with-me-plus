@@ -1,4 +1,4 @@
-package ewm.valid;
+package ewm.validation;
 
 import ewm.event.dto.PublicEventParam;
 import jakarta.validation.ConstraintValidator;

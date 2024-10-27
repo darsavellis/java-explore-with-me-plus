@@ -6,6 +6,7 @@ import ewm.dto.ViewStatsDto;
 import ewm.mappers.EndPointHitMapper;
 import ewm.model.EndpointHit;
 import ewm.repository.HitRepository;
+import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,12 +30,7 @@ public class StatServiceImpl implements StatService {
     public void hit(EndpointHitDto endpointHitDto) {
         log.info("Запись {} в БД", endpointHitDto);
         EndpointHit endpointHit = hitMapper.mapToEndpointHit(endpointHitDto);
-        hitRepository.deleteAll();
         hitRepository.save(endpointHit);
-        hitRepository.flush();
-        log.info("Сохраненные данные: {}", hitRepository.findAll());
-        log.info("Через статистику {}", stats(new RequestParamDto(LocalDateTime.now().minusYears(10), LocalDateTime.now().plusYears(10), List.of(endpointHitDto.getUri()), true)));
-        log.info("Через статистику {}", stats(new RequestParamDto(LocalDateTime.now().minusYears(10), LocalDateTime.now().plusYears(10), List.of(endpointHitDto.getUri()), true)));
         log.info("Объект {} успешно сохранен в БД", endpointHit);
     }
 
@@ -42,6 +38,14 @@ public class StatServiceImpl implements StatService {
     @Transactional(readOnly = true)
     public List<ViewStatsDto> stats(RequestParamDto params) {
         log.info("Запрос статистики {}", params);
+
+        if (params.getUnique() == null) {
+            params.setUnique(false);
+        }
+        if (params.getStart().isAfter(LocalDateTime.now())) {
+            throw new ValidationException("Время начала не может быть в прошлом");
+        }
+
         List<ViewStatsDto> statsToReturn;
 
         boolean paramsIsExists = params.getUris() == null || params.getUris().isEmpty();

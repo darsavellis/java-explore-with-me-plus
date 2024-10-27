@@ -2,7 +2,7 @@ package ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ewm.event.model.Location;
-import ewm.valid.EventDateInTwoHours;
+import ewm.validation.EventDateInTwoHours;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
