@@ -26,7 +26,7 @@ create TABLE IF NOT EXISTS events (
     participant_limit INT,
     published_on TIMESTAMP WITHOUT TIME ZONE,
     request_moderation BOOLEAN,
-    state ENUM('PENDING', 'CANCELED', 'PUBLISHED'),
+    state varchar(100),
     title VARCHAR(120),
     views BIGINT
 );
@@ -48,5 +48,6 @@ create TABLE IF NOT EXISTS requests (
     created timestamp,
     event_id BIGINT,
     requester_id BIGINT,
-    status varchar(100)
+    status varchar(100),
+    UNIQUE(event_id, requester_id)
 );

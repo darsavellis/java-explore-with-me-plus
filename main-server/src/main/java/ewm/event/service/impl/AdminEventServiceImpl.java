@@ -16,6 +16,8 @@ import ewm.event.repository.EventRepository;
 import ewm.event.service.AdminEventService;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
+import ewm.request.model.RequestStatus;
+import ewm.request.repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,35 +25,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AdminEventServiceImpl implements AdminEventService {
     final EventRepository eventRepository;
+    final RequestRepository requestRepository;
     final PublicCategoryService categoryService;
     final EventMapper eventMapper;
     final CategoryMapper categoryMapper;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventFullDto> getAllBy(AdminEventParam eventParam) {
         Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
-        QEvent event = QEvent.event;
+        QEvent qEvent = QEvent.event;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         Optional.ofNullable(eventParam.getUsers())
-            .ifPresent(userIds -> booleanBuilder.and(event.initiator.id.in(userIds)));
+            .ifPresent(userIds -> booleanBuilder.and(qEvent.initiator.id.in(userIds)));
         Optional.ofNullable(eventParam.getStates())
-            .ifPresent(userStates -> booleanBuilder.and(event.state.in(userStates)));
+            .ifPresent(userStates -> booleanBuilder.and(qEvent.state.in(userStates)));
         Optional.ofNullable(eventParam.getCategories())
-            .ifPresent(categoryIds -> booleanBuilder.and(event.category.id.in(categoryIds)));
+            .ifPresent(categoryIds -> booleanBuilder.and(qEvent.category.id.in(categoryIds)));
         Optional.ofNullable(eventParam.getRangeStart())
-            .ifPresent(rangeStart -> booleanBuilder.and(event.eventDate.after(rangeStart)));
+            .ifPresent(rangeStart -> booleanBuilder.and(qEvent.eventDate.after(rangeStart)));
         Optional.ofNullable(eventParam.getRangeEnd())
-            .ifPresent(rangeEnd -> booleanBuilder.and(event.eventDate.before(rangeEnd)));
+            .ifPresent(rangeEnd -> booleanBuilder.and(qEvent.eventDate.before(rangeEnd)));
 
-        return eventRepository.findAll(booleanBuilder, pageable).map(eventMapper::toEventFullDto).toList();
+        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).getContent();
+
+        Map<Long, Long> requestCountMap = requestRepository.findAllByEventIdInAndStatusIs(
+            events.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED
+        ).stream().collect(Collectors.groupingBy(req -> req.getEvent().getId(), Collectors.counting()));
+
+        events.forEach(event -> {
+            event.setConfirmedRequests(requestCountMap.getOrDefault(event.getId(), 0L));
+        });
+
+        return events.stream().map(eventMapper::toEventFullDto).toList();
     }
 
     @Override

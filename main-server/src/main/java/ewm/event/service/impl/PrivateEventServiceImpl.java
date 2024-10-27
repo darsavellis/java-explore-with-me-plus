@@ -15,7 +15,6 @@ import ewm.event.service.PrivateEventService;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.exception.PermissionException;
-import ewm.exception.ValidationException;
 import ewm.user.mappers.UserMapper;
 import ewm.user.model.User;
 import ewm.user.service.UserService;
@@ -40,7 +39,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final EventMapper eventMapper;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventShortDto> getAllBy(long userId, PageRequest page) {
         return eventRepository.findAllByInitiatorId(userId, page)
             .map(eventMapper::toEventShortDto).getContent();
@@ -57,7 +56,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
             .orElseThrow(() -> new NotFoundException("Событие не найдено"));

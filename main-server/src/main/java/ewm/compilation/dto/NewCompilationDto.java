@@ -13,6 +13,6 @@ import java.util.List;
 public class NewCompilationDto {
     List<Long> events;
     boolean pinned;
-    @Size(max = 50, min = 1)
+    @Size(min = 1, max = 50)
     String title;
 }

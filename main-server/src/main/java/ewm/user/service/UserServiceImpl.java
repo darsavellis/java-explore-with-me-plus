@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<UserDto> getAll(List<Long> ids, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         BooleanBuilder booleanBuilder = new BooleanBuilder();

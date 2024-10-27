@@ -20,14 +20,14 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
     final CategoryMapper categoryMapper;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CategoryDto> getAll(int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         return categoryRepository.findAll(pageable).map(categoryMapper::toCategoryDto).getContent();
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CategoryDto getBy(long id) {
         return categoryRepository.findById(id).map(categoryMapper::toCategoryDto)
             .orElseThrow(() -> new NotFoundException("Категория с id = " + id + " не найдена"));

@@ -14,8 +14,6 @@ public interface CategoryMapper {
 
     Category toCategory(CategoryDto categoryDto);
 
-    NewCategoryDto toNewCategoryDto(Category category);
-
     @Mapping(target = "id", ignore = true)
     Category toCategory(NewCategoryDto newCategoryDto);
 }
