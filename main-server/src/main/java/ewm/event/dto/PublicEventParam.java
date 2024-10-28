@@ -1,6 +1,6 @@
 package ewm.event.dto;
 
-import ewm.valid.StartAndEndValid;
+import ewm.validation.StartAndEndValid;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

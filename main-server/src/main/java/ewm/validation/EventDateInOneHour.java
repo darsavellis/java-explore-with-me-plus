@@ -1,4 +1,4 @@
-package ewm.valid;
+package ewm.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
