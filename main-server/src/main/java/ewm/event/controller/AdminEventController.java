@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,10 @@ public class AdminEventController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
 
-    public List<EventFullDto> getAllBy(@Validated @ModelAttribute AdminEventParam adminEventParam) {
-        return adminEventService.getAllBy(adminEventParam);
+    public List<EventFullDto> getAllBy(@Validated @ModelAttribute AdminEventParam adminEventParam,
+                                       @RequestParam(defaultValue = "0") int from,
+                                       @RequestParam(defaultValue = "10") int size) {
+        return adminEventService.getAllBy(adminEventParam, PageRequest.of(from, size));
     }
 
     @PatchMapping("/{eventId}")

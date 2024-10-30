@@ -2,6 +2,7 @@ package ewm.request.repository;
 
 import ewm.request.model.ParticipationRequest;
 import ewm.request.model.RequestStatus;
+import ewm.request.repository.projections.ConfirmedRequests;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

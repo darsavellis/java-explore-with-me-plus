@@ -23,7 +23,7 @@ public class PublicCategoryServiceImpl implements PublicCategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDto> getAll(Pageable pageRequest) {
+    public List<CategoryDto> findAllBy(Pageable pageRequest) {
         return categoryRepository.findAll(pageRequest).map(categoryMapper::toCategoryDto).getContent();
     }
 

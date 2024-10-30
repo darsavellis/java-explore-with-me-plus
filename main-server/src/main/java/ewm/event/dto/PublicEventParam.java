@@ -22,6 +22,4 @@ public class PublicEventParam {
     LocalDateTime rangeEnd;
     boolean onlyAvailable;
     String sort;
-    int from = 0;
-    int size = 10;
 }

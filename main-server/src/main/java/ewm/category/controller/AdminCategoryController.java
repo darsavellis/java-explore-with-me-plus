@@ -19,8 +19,8 @@ public class AdminCategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto add(@Valid @RequestBody NewCategoryDto categoryDto) {
-        return serviceAdmin.add(categoryDto);
+    public CategoryDto create(@Valid @RequestBody NewCategoryDto categoryDto) {
+        return serviceAdmin.create(categoryDto);
     }
 
     @DeleteMapping("/{catId}")

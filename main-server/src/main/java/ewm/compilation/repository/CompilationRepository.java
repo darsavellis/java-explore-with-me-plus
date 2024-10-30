@@ -1,8 +1,8 @@
 package ewm.compilation.repository;
 
-import ewm.compilation.dto.CompilationEvent;
-import ewm.compilation.dto.EmptyCompilation;
 import ewm.compilation.model.Compilation;
+import ewm.compilation.repository.projections.CompilationEvent;
+import ewm.compilation.repository.projections.EmptyCompilation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getAll(List<Long> ids, Pageable pageRequest) {
+    public List<UserDto> findAllBy(List<Long> ids, Pageable pageRequest) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (ids != null && !ids.isEmpty()) {
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void delete(long userId) {
+    public void deleteBy(long userId) {
         userRepository.deleteById(userId);
     }
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationDto {
     Long id;
-    List<EventShortDto> events;
     boolean pinned;
     String title;
+    Set<EventShortDto> events;
 }
