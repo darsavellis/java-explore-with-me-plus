@@ -1,4 +1,4 @@
-package ewm.compilation.dto;
+package ewm.compilation.repository.projections;
 
 public interface EmptyCompilation {
     long getId();

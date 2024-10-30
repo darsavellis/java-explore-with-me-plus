@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatController {
-    private final StatService statService;
+    final StatService statService;
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)

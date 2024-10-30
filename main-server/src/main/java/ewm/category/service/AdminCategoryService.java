@@ -4,7 +4,7 @@ import ewm.category.dto.CategoryDto;
 import ewm.category.dto.NewCategoryDto;
 
 public interface AdminCategoryService {
-    CategoryDto add(NewCategoryDto categoryDto);
+    CategoryDto create(NewCategoryDto categoryDto);
 
     void deleteBy(long id);
 

@@ -13,12 +13,12 @@ import ewm.event.repository.EventRepository;
 import ewm.event.service.PublicEventService;
 import ewm.exception.NotFoundException;
 import ewm.request.model.RequestStatus;
-import ewm.request.repository.ConfirmedRequests;
 import ewm.request.repository.RequestRepository;
+import ewm.request.repository.projections.ConfirmedRequests;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +37,11 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getAllBy(PublicEventParam eventParam) {
+    public List<EventShortDto> getAllBy(PublicEventParam eventParam, Pageable pageRequest) {
         QEvent qEvent = QEvent.event;
-        PageRequest pageRequest = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
+        BooleanBuilder eventQueryExpression = buildExpression(eventParam, qEvent);
 
-        BooleanBuilder booleanBuilder = buildExpression(eventParam, qEvent);
-
-        List<EventShortDto> events = eventRepository.findAll(booleanBuilder, pageRequest)
+        List<EventShortDto> events = eventRepository.findAll(eventQueryExpression, pageRequest)
             .stream().map(eventMapper::toEventShortDto).toList();
 
         List<Long> eventIds = events.stream().map(EventShortDto::getId).toList();
@@ -92,24 +90,24 @@ public class PublicEventServiceImpl implements PublicEventService {
         return event;
     }
 
-    private BooleanBuilder buildExpression(PublicEventParam eventParam, QEvent qEvent) {
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+    BooleanBuilder buildExpression(PublicEventParam eventParam, QEvent qEvent) {
+        BooleanBuilder eventQueryExpression = new BooleanBuilder();
 
-        booleanBuilder.and(qEvent.state.eq(EventState.PUBLISHED));
+        eventQueryExpression.and(qEvent.state.eq(EventState.PUBLISHED));
         Optional.ofNullable(eventParam.getRangeStart())
-            .ifPresent(rangeStart -> booleanBuilder.and(qEvent.eventDate.after(rangeStart)));
+            .ifPresent(rangeStart -> eventQueryExpression.and(qEvent.eventDate.after(rangeStart)));
         Optional.ofNullable(eventParam.getRangeEnd())
-            .ifPresent(rangeEnd -> booleanBuilder.and(qEvent.eventDate.before(eventParam.getRangeEnd())));
+            .ifPresent(rangeEnd -> eventQueryExpression.and(qEvent.eventDate.before(eventParam.getRangeEnd())));
         Optional.ofNullable(eventParam.getPaid())
-            .ifPresent(paid -> booleanBuilder.and(qEvent.paid.eq(paid)));
+            .ifPresent(paid -> eventQueryExpression.and(qEvent.paid.eq(paid)));
         Optional.ofNullable(eventParam.getCategories())
             .filter(category -> !category.isEmpty())
-            .ifPresent(category -> booleanBuilder.and(qEvent.category.id.in(category)));
+            .ifPresent(category -> eventQueryExpression.and(qEvent.category.id.in(category)));
         Optional.ofNullable(eventParam.getText())
             .filter(text -> !text.isEmpty()).ifPresent(text -> {
-                booleanBuilder.and(qEvent.annotation.containsIgnoreCase(text));
-                booleanBuilder.or(qEvent.description.containsIgnoreCase(text));
+                eventQueryExpression.and(qEvent.annotation.containsIgnoreCase(text));
+                eventQueryExpression.or(qEvent.description.containsIgnoreCase(text));
             });
-        return booleanBuilder;
+        return eventQueryExpression;
     }
 }

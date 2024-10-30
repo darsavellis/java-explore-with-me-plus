@@ -1,10 +1,10 @@
 package ewm.compilation.mappers;
 
 import ewm.compilation.dto.CompilationDto;
-import ewm.compilation.dto.EmptyCompilation;
 import ewm.compilation.dto.NewCompilationDto;
 import ewm.compilation.dto.UpdateCompilationRequest;
 import ewm.compilation.model.Compilation;
+import ewm.compilation.repository.projections.EmptyCompilation;
 import ewm.event.mappers.EventMapper;
 import ewm.event.model.Event;
 import org.mapstruct.Mapper;

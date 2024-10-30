@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,8 +29,10 @@ public class PublicEventController {
 
     @GetMapping
     List<EventShortDto> getAllBy(@Valid @ModelAttribute PublicEventParam publicEventParam,
+                                 @RequestParam(defaultValue = "0") int from,
+                                 @RequestParam(defaultValue = "10") int size,
                                  HttpServletRequest request) {
-        List<EventShortDto> events = publicEventService.getAllBy(publicEventParam);
+        List<EventShortDto> events = publicEventService.getAllBy(publicEventParam, PageRequest.of(from, size));
         addHit("/events", request.getRemoteAddr());
         return events;
     }

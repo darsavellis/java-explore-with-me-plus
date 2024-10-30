@@ -1,9 +1,13 @@
 package ewm.compilation.service.impl;
 
-import ewm.compilation.dto.*;
+import ewm.compilation.dto.CompilationDto;
+import ewm.compilation.dto.NewCompilationDto;
+import ewm.compilation.dto.UpdateCompilationRequest;
 import ewm.compilation.mappers.CompilationMapper;
 import ewm.compilation.model.Compilation;
 import ewm.compilation.repository.CompilationRepository;
+import ewm.compilation.repository.projections.CompilationEvent;
+import ewm.compilation.repository.projections.EmptyCompilation;
 import ewm.compilation.service.CompilationService;
 import ewm.event.dto.EventShortDto;
 import ewm.event.mappers.EventMapper;
@@ -18,10 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,10 +43,10 @@ public class CompilationServiceImpl implements CompilationService {
                 Collectors.mapping(CompilationEvent::getEventId, Collectors.toList()))
             );
 
-        List<Long> eventIds = compilationEventMap.values()
+        Set<Long> eventIds = compilationEventMap.values()
             .stream()
             .flatMap(List::stream)
-            .toList();
+            .collect(Collectors.toSet());
 
         Map<Long, EventShortDto> allEvents = eventRepository.findAllByIdIn(eventIds)
             .stream()
@@ -56,9 +57,10 @@ public class CompilationServiceImpl implements CompilationService {
         return compilations
             .stream().map(compilationMapper::toCompilationDto)
             .peek(compilation -> compilation.setEvents(compilationEventMap.getOrDefault(
-                compilation.getId(),
-                Collections.emptyList()
-            ).stream().map(allEvents::get).toList()))
+                    compilation.getId(),
+                    Collections.emptyList())
+                .stream().map(allEvents::get)
+                .collect(Collectors.toSet())))
             .toList();
     }
 

@@ -7,11 +7,12 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
     List<Event> findAllByInitiatorId(long userId, Pageable pageRequest);
 
-    List<Event> findAllByIdIn(@Param("ids") List<Long> ids);
+    List<Event> findAllByIdIn(@Param("ids") Set<Long> ids);
 
     boolean existsByCategoryId(long categoryId);
 }

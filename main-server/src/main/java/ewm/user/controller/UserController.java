@@ -22,20 +22,20 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody NewUserRequest newUserRequest) {
+    public UserDto create(@Valid @RequestBody NewUserRequest newUserRequest) {
         return userService.create(newUserRequest);
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
-                                  @RequestParam(defaultValue = "0") int from,
-                                  @RequestParam(defaultValue = "10") int size) {
-        return userService.getAll(ids, PageRequest.of(from, size));
+    public List<UserDto> findAllBy(@RequestParam(required = false) List<Long> ids,
+                                   @RequestParam(defaultValue = "0") int from,
+                                   @RequestParam(defaultValue = "10") int size) {
+        return userService.findAllBy(ids, PageRequest.of(from, size));
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long userId) {
-        userService.delete(userId);
+    public void deleteBy(@PathVariable Long userId) {
+        userService.deleteBy(userId);
     }
 }

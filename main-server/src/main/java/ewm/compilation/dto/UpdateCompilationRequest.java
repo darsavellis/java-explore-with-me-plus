@@ -7,15 +7,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateCompilationRequest {
-    List<Long> events;
     boolean pinned;
     @Size(min = 1, max = 50)
     String title;
+    Set<Long> events;
 }

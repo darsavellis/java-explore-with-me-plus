@@ -9,9 +9,9 @@ import java.util.List;
 public interface UserService {
     UserDto create(NewUserRequest newUserRequest);
 
-    List<UserDto> getAll(List<Long> ids, Pageable pageRequest);
+    List<UserDto> findAllBy(List<Long> ids, Pageable pageRequest);
 
-    void delete(long userId);
+    void deleteBy(long userId);
 
     UserDto getBy(long userId);
 }

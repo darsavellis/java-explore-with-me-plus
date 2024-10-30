@@ -15,12 +15,11 @@ import ewm.event.service.AdminEventService;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.request.model.RequestStatus;
-import ewm.request.repository.ConfirmedRequests;
 import ewm.request.repository.RequestRepository;
+import ewm.request.repository.projections.ConfirmedRequests;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +39,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventFullDto> getAllBy(AdminEventParam eventParam) {
-        Pageable pageRequest = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
+    public List<EventFullDto> getAllBy(AdminEventParam eventParam, Pageable pageRequest) {
         QEvent qEvent = QEvent.event;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -66,7 +64,6 @@ public class AdminEventServiceImpl implements AdminEventService {
             .stream().collect(Collectors.toMap(ConfirmedRequests::getEventId, ConfirmedRequests::getConfirmedRequests));
 
         events.forEach(event -> event.setConfirmedRequests(confirmedRequestsMap.getOrDefault(event.getId(), 0L)));
-
         return events.stream().toList();
     }
 

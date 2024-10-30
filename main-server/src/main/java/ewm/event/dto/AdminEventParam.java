@@ -19,6 +19,4 @@ public class AdminEventParam {
     LocalDateTime rangeStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime rangeEnd;
-    Integer from = 0;
-    Integer size = 10;
 }
