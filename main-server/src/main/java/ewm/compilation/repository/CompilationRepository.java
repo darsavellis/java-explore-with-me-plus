@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CompilationRepository extends JpaRepository<Compilation, Long> {
     @Query(value = "SELECT id, pinned, title FROM compilations", nativeQuery = true)
-    List<EmptyCompilation> findAllByPinnedIs(Boolean pinned, Pageable pageable);
+    List<EmptyCompilation> findAllByPinnedIs(Boolean pinned, Pageable pageRequest);
 
     @Query(value = "SELECT compilation_id, event_id FROM compilations_events", nativeQuery = true)
     List<CompilationEvent> getCompilationEventMapping();

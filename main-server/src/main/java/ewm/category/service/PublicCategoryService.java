@@ -1,11 +1,12 @@
 package ewm.category.service;
 
 import ewm.category.dto.CategoryDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PublicCategoryService {
-    List<CategoryDto> getAll(int from, int size);
+    List<CategoryDto> getAll(Pageable pageRequest);
 
     CategoryDto getBy(long id);
 }

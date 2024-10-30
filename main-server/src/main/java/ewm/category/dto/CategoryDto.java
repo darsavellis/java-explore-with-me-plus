@@ -13,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryDto {
     Long id;
-
     @Size(min = 1, max = 50)
     String name;
 }

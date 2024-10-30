@@ -21,7 +21,7 @@ import ewm.user.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +40,9 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getAllBy(long userId, PageRequest page) {
-        return eventRepository.findAllByInitiatorId(userId, page)
-            .map(eventMapper::toEventShortDto).getContent();
+    public List<EventShortDto> getAllBy(long userId, Pageable pageRequest) {
+        return eventRepository.findAllByInitiatorId(userId, pageRequest)
+            .stream().map(eventMapper::toEventShortDto).toList();
     }
 
     @Override

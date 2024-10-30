@@ -12,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,15 +34,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getAll(List<Long> ids, int from, int size) {
-        Pageable pageable = PageRequest.of(from, size);
+    public List<UserDto> getAll(List<Long> ids, Pageable pageRequest) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (ids != null && !ids.isEmpty()) {
             booleanBuilder.and(QUser.user.id.in(ids));
         }
 
-        Page<User> usersPage = userRepository.findAll(booleanBuilder, pageable);
+        Page<User> usersPage = userRepository.findAll(booleanBuilder, pageRequest);
         return usersPage.map(userMapper::toUserDto).toList();
     }
 

@@ -19,7 +19,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,11 +39,11 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(PublicEventParam eventParam) {
         QEvent qEvent = QEvent.event;
-        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
+        PageRequest pageRequest = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
 
         BooleanBuilder booleanBuilder = buildExpression(eventParam, qEvent);
 
-        List<EventShortDto> events = eventRepository.findAll(booleanBuilder, pageable)
+        List<EventShortDto> events = eventRepository.findAll(booleanBuilder, pageRequest)
             .stream().map(eventMapper::toEventShortDto).toList();
 
         List<Long> eventIds = events.stream().map(EventShortDto::getId).toList();
