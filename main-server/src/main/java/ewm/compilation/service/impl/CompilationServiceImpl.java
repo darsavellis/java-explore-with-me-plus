@@ -14,7 +14,7 @@ import ewm.exception.ValidationException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +35,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationDto> getAll(Boolean pinned, Integer from, Integer size) {
-        PageRequest pageable = PageRequest.of(from, size);
-
+    public List<CompilationDto> getAll(Boolean pinned, Pageable pageRequest) {
         Map<Long, List<Long>> compilationEventMap = compilationRepository.getCompilationEventMapping()
             .stream().collect(Collectors.groupingBy(
                 CompilationEvent::getCompilationId,
@@ -53,7 +51,7 @@ public class CompilationServiceImpl implements CompilationService {
             .stream()
             .collect(Collectors.toMap(Event::getId, eventMapper::toEventShortDto));
 
-        List<EmptyCompilation> compilations = compilationRepository.findAllByPinnedIs(pinned, pageable);
+        List<EmptyCompilation> compilations = compilationRepository.findAllByPinnedIs(pinned, pageRequest);
 
         return compilations
             .stream().map(compilationMapper::toCompilationDto)
@@ -64,7 +62,6 @@ public class CompilationServiceImpl implements CompilationService {
             .toList();
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public CompilationDto getBy(Long id) {
@@ -74,7 +71,6 @@ public class CompilationServiceImpl implements CompilationService {
         }
         return compilationMapper.toCompilationDto(compilationOptional.get());
     }
-
 
     @Override
     @Transactional

@@ -41,7 +41,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventFullDto> getAllBy(AdminEventParam eventParam) {
-        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
+        Pageable pageRequest = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
         QEvent qEvent = QEvent.event;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -56,7 +56,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         Optional.ofNullable(eventParam.getRangeEnd())
             .ifPresent(rangeEnd -> booleanBuilder.and(qEvent.eventDate.before(rangeEnd)));
 
-        List<EventFullDto> events = eventRepository.findAll(booleanBuilder, pageable)
+        List<EventFullDto> events = eventRepository.findAll(booleanBuilder, pageRequest)
             .stream().map(eventMapper::toEventFullDto).toList();
 
         List<Long> eventIds = events.stream().map(EventFullDto::getId).toList();

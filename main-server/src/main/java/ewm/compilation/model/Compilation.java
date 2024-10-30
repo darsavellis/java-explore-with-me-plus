@@ -8,8 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,5 +29,5 @@ public class Compilation {
     @JoinTable(name = "compilations_events",
         joinColumns = {@JoinColumn(name = "compilation_id")},
         inverseJoinColumns = {@JoinColumn(name = "event_id")})
-    List<Event> events = new ArrayList<>();
+    Set<Event> events = new HashSet<>();
 }

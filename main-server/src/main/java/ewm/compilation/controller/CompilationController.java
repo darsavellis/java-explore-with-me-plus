@@ -10,6 +10,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class CompilationController {
     public List<CompilationDto> getAll(@RequestParam(required = false) Boolean pinned,
                                        @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
                                        @Positive @RequestParam(required = false, defaultValue = "10") int size) {
-        return compilationService.getAll(pinned, from, size);
+        return compilationService.getAll(pinned, PageRequest.of(from, size));
     }
 
     @GetMapping("/compilations/{compId}")

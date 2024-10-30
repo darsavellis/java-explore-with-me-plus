@@ -5,8 +5,9 @@ import ewm.category.mapper.CategoryMapper;
 import ewm.category.repository.CategoryRepository;
 import ewm.category.service.PublicCategoryService;
 import ewm.exception.NotFoundException;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,19 +16,19 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicCategoryServiceImpl implements PublicCategoryService {
     final CategoryRepository categoryRepository;
     final CategoryMapper categoryMapper;
 
     @Override
-    @Transactional
-    public List<CategoryDto> getAll(int from, int size) {
-        Pageable pageable = PageRequest.of(from, size);
-        return categoryRepository.findAll(pageable).map(categoryMapper::toCategoryDto).getContent();
+    @Transactional(readOnly = true)
+    public List<CategoryDto> getAll(Pageable pageRequest) {
+        return categoryRepository.findAll(pageRequest).map(categoryMapper::toCategoryDto).getContent();
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public CategoryDto getBy(long id) {
         return categoryRepository.findById(id).map(categoryMapper::toCategoryDto)
             .orElseThrow(() -> new NotFoundException("Категория с id = " + id + " не найдена"));
