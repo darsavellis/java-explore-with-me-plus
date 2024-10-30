@@ -1,17 +1,20 @@
 package ewm.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "hits")
 @Getter
 @Setter
 @ToString
+@Table(name = "hits")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

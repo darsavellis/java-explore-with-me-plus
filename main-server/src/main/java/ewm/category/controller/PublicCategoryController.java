@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/categories")
+@RequestMapping("/categories")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicCategoryController {
     final PublicCategoryService categoryService;
@@ -23,7 +23,7 @@ public class PublicCategoryController {
         return categoryService.findAllBy(PageRequest.of(from, size));
     }
 
-    @GetMapping(path = "/{catId}")
+    @GetMapping("/{catId}")
     public CategoryDto findBy(@PathVariable("catId") long catId) {
         return categoryService.getBy(catId);
     }

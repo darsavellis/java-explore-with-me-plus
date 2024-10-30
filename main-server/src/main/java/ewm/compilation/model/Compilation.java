@@ -21,9 +21,9 @@ public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "pinned")
+    @Column(name = "pinned", nullable = false)
     Boolean pinned;
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     String title;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "compilations_events",

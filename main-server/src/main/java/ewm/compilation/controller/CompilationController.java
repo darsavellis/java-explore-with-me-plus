@@ -41,13 +41,13 @@ public class CompilationController {
         return compilationService.add(compilationDto);
     }
 
-    @DeleteMapping(path = "/admin/compilations/{comId}")
+    @DeleteMapping("/admin/compilations/{comId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBy(@PathVariable("comId") long id) {
         compilationService.deleteBy(id);
     }
 
-    @PatchMapping(path = "/admin/compilations/{comId}")
+    @PatchMapping("/admin/compilations/{comId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateBy(@PathVariable("comId") long id,
                                    @Valid @RequestBody UpdateCompilationRequest compilationDto) {
