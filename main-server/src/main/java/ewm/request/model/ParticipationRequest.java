@@ -3,9 +3,11 @@ package ewm.request.model;
 import ewm.event.model.Event;
 import ewm.user.model.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "requests", uniqueConstraints = @UniqueConstraint(columnNames = {"requester_id", "event_id"}))
 public class ParticipationRequest {
     @Id
@@ -20,10 +23,10 @@ public class ParticipationRequest {
     Long id;
     @Column(name = "created")
     LocalDateTime created;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     Event event;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
     User requester;
     @Enumerated(EnumType.STRING)

@@ -12,22 +12,23 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/users/{userId}/requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicRequestController {
     final PublicRequestService requestService;
 
-    @GetMapping("/users/{userId}/requests")
+    @GetMapping()
     List<ParticipationRequestDto> getSentBy(@PathVariable long userId) {
         return requestService.getSentBy(userId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/users/{userId}/requests")
+    @PostMapping
     ParticipationRequestDto send(@PathVariable long userId, @RequestParam Long eventId) {
         return requestService.send(userId, eventId);
     }
 
-    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
+    @PatchMapping("{requestId}/cancel")
     ParticipationRequestDto cancel(@PathVariable long userId, @PathVariable long requestId) {
         return requestService.cancel(requestId, userId);
     }

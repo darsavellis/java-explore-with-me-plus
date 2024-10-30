@@ -39,7 +39,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final EventMapper eventMapper;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(long userId, PageRequest page) {
         return eventRepository.findAllByInitiatorId(userId, page)
             .map(eventMapper::toEventShortDto).getContent();
@@ -56,7 +56,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
             .orElseThrow(() -> new NotFoundException("Событие не найдено"));

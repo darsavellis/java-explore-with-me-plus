@@ -19,8 +19,7 @@ public interface StateActionMapper {
     default EventState toEventState(AdminStateAction adminStateAction) {
         return switch (adminStateAction) {
             case PUBLISH_EVENT -> EventState.PUBLISHED;
-            case REJECT_EVENT -> EventState.CANCELED
-            ;
+            case REJECT_EVENT -> EventState.CANCELED;
         };
     }
 }

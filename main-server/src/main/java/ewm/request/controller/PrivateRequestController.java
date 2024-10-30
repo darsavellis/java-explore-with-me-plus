@@ -14,19 +14,18 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@RequestMapping("/users/{userId}/events/{eventId}/requests")
 public class PrivateRequestController {
     final PrivateRequestService requestService;
 
-
-    @GetMapping("/users/{userId}/events/{eventId}/requests")
+    @GetMapping
     List<ParticipationRequestDto> getReceivedBy(@PathVariable long userId, @PathVariable long eventId) {
         return requestService.getReceivedBy(userId, eventId);
     }
 
-    @PatchMapping("/users/{userId}/events/{eventId}/requests")
+    @PatchMapping
     EventRequestStatusUpdateResult update(@PathVariable long userId, @PathVariable long eventId,
                                           @RequestBody EventRequestStatusUpdateRequest updateRequest) {
         return requestService.update(userId, eventId, updateRequest);
     }
-
 }

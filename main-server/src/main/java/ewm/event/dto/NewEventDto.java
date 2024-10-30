@@ -5,9 +5,11 @@ import ewm.event.model.Location;
 import ewm.validation.EventDateInTwoHours;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewEventDto {
     @NotBlank
     @Length(min = 20, max = 2000)

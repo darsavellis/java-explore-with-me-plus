@@ -5,15 +5,18 @@ import ewm.category.dto.CategoryDto;
 import ewm.event.model.EventState;
 import ewm.event.model.Location;
 import ewm.user.dto.UserShortDto;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventFullDto {
     Long id;
     String annotation;

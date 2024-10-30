@@ -1,30 +1,55 @@
 package ewm.compilation.controller;
 
 import ewm.compilation.dto.CompilationDto;
+import ewm.compilation.dto.NewCompilationDto;
+import ewm.compilation.dto.UpdateCompilationRequest;
 import ewm.compilation.service.CompilationService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/compilations")
+@RequestMapping
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationController {
-    private final CompilationService compilationService;
+    final CompilationService compilationService;
 
-    @GetMapping
+    @GetMapping("/compilations")
     public List<CompilationDto> getAll(@RequestParam(required = false) Boolean pinned,
                                        @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
                                        @Positive @RequestParam(required = false, defaultValue = "10") int size) {
         return compilationService.getAll(pinned, from, size);
     }
 
-    @GetMapping("/{compId}")
-    public CompilationDto getBy(@PositiveOrZero @PathVariable(required = true) long compId) {
+    @GetMapping("/compilations/{compId}")
+    public CompilationDto getBy(@PositiveOrZero @PathVariable long compId) {
         return compilationService.getBy(compId);
     }
 
+    @PostMapping("/admin/compilations")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompilationDto add(@Valid @RequestBody NewCompilationDto compilationDto) {
+        return compilationService.add(compilationDto);
+    }
+
+    @DeleteMapping(path = "/admin/compilations/{comId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBy(@PathVariable("comId") long id) {
+        compilationService.deleteBy(id);
+    }
+
+    @PatchMapping(path = "/admin/compilations/{comId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CompilationDto updateBy(@PathVariable("comId") long id,
+                                   @Valid @RequestBody UpdateCompilationRequest compilationDto) {
+        return compilationService.updateBy(id, compilationDto);
+    }
 }
