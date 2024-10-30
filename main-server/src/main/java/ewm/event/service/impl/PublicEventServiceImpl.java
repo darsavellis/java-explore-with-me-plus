@@ -2,66 +2,63 @@ package ewm.event.service.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import ewm.client.StatRestClientImpl;
-import ewm.dto.EndpointHitDto;
 import ewm.dto.ViewStatsDto;
 import ewm.event.dto.EventFullDto;
 import ewm.event.dto.EventShortDto;
 import ewm.event.dto.PublicEventParam;
 import ewm.event.mappers.EventMapper;
-import ewm.event.model.Event;
 import ewm.event.model.EventState;
 import ewm.event.model.QEvent;
 import ewm.event.repository.EventRepository;
 import ewm.event.service.PublicEventService;
 import ewm.exception.NotFoundException;
 import ewm.request.model.RequestStatus;
+import ewm.request.repository.ConfirmedRequests;
 import ewm.request.repository.RequestRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicEventServiceImpl implements PublicEventService {
-    private final EventRepository eventRepository;
-    private final RequestRepository requestRepository;
-    private final StatRestClientImpl statRestClient;
-    private final EventMapper eventMapper;
-
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    final EventRepository eventRepository;
+    final RequestRepository requestRepository;
+    final StatRestClientImpl statRestClient;
+    final EventMapper eventMapper;
 
     @Override
-    @Transactional
-    public List<EventShortDto> getAllBy(PublicEventParam eventParam, HttpServletRequest request) {
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getAllBy(PublicEventParam eventParam) {
         QEvent qEvent = QEvent.event;
-        QSort qSort = new QSort(QEvent.event.views.asc());
-        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize(), qSort);
+        Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
 
         BooleanBuilder booleanBuilder = buildExpression(eventParam, qEvent);
 
-        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).stream().toList();
+        List<EventShortDto> events = eventRepository.findAll(booleanBuilder, pageable)
+            .stream().map(eventMapper::toEventShortDto).toList();
 
-        Map<Long, Long> requestCountMap = requestRepository.findAllByEventIdInAndStatusIs(
-            events.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED
-        ).stream().collect(Collectors.groupingBy(req -> req.getEvent().getId(), Collectors.counting()));
+        List<Long> eventIds = events.stream().map(EventShortDto::getId).toList();
+        RequestStatus status = RequestStatus.CONFIRMED;
+        Map<Long, Long> confirmedRequestsMap = requestRepository
+            .findAllByEventIdInAndStatusIs(eventIds, status)
+            .stream().collect(Collectors.toMap(ConfirmedRequests::getEventId, ConfirmedRequests::getConfirmedRequests));
 
         Set<String> uris = events.stream()
             .map(event -> "/events/" + event.getId()).collect(Collectors.toSet());
 
         LocalDateTime start = events
             .stream()
-            .min(Comparator.comparing(Event::getEventDate))
+            .min(Comparator.comparing(EventShortDto::getEventDate))
             .orElseThrow()
             .getEventDate();
 
@@ -69,19 +66,31 @@ public class PublicEventServiceImpl implements PublicEventService {
             .stats(start, LocalDateTime.now(), uris.stream().toList(), false).stream()
             .collect(Collectors.groupingBy(ViewStatsDto::getUri, Collectors.summingLong(ViewStatsDto::getHits)));
 
-        addHit("/events", request.getRemoteAddr());
-
-        events.forEach(shortDto -> {
+        return events.stream().peek(shortDto -> {
             shortDto.setViews(viewMap.getOrDefault("/events/" + shortDto.getId(), 0L));
-            shortDto.setConfirmedRequests(requestCountMap.getOrDefault(shortDto.getId(), 0L));
-        });
+            shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
+        }).toList();
+    }
 
-        if (eventParam.getSort() != null && eventParam.getSort().equalsIgnoreCase("viewMap")) {
-            pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize(),
-                new QSort(qEvent.views.asc()));
+    @Override
+    @Transactional(readOnly = true)
+    public EventFullDto getBy(long eventId) {
+        EventFullDto event = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
+            .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
+
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new NotFoundException("Событие id = " + eventId + " не опубликовано");
         }
 
-        return eventRepository.findAll(booleanBuilder, pageable).map(eventMapper::toEventShortDto).toList();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = now.minusYears(10);
+
+        statRestClient.stats(start, now, List.of("/events/" + eventId), true)
+            .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
+
+        long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
+        event.setConfirmedRequests(confirmedRequests);
+        return event;
     }
 
     private BooleanBuilder buildExpression(PublicEventParam eventParam, QEvent qEvent) {
@@ -103,38 +112,5 @@ public class PublicEventServiceImpl implements PublicEventService {
                 booleanBuilder.or(qEvent.description.containsIgnoreCase(text));
             });
         return booleanBuilder;
-    }
-
-    @Override
-    @Transactional
-    public EventFullDto getBy(long eventId, HttpServletRequest request) throws InterruptedException {
-        Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));
-
-        if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new NotFoundException("Событие id = " + eventId + " не опубликовано");
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now.minusYears(10);
-
-        statRestClient.stats(start, now, List.of("/events/" + eventId), true)
-            .forEach(viewStatsDto -> event.setViews(viewStatsDto.getHits()));
-
-        long confirmedRequests = requestRepository.countAllByEventIdAndStatusIs(eventId, RequestStatus.CONFIRMED);
-        event.setConfirmedRequests(confirmedRequests);
-
-        eventRepository.save(event);
-
-        addHit("/events/" + eventId, request.getRemoteAddr());
-
-        return eventMapper.toEventFullDto(event);
-    }
-
-    @Transactional
-    private void addHit(String uri, String ip) {
-        LocalDateTime now = LocalDateTime.now();
-        EndpointHitDto hitDto = new EndpointHitDto("main-server", uri, ip, now.format(dateTimeFormatter));
-        statRestClient.addHit(hitDto);
     }
 }

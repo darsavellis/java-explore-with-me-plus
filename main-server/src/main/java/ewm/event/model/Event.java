@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import ewm.category.model.Category;
 import ewm.user.model.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -17,18 +19,17 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Table(name = "events")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name = "annotation", length = 2000)
     String annotation;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "category_id")
     Category category;
-    @Column(name = "confirmed_requests")
-    long confirmedRequests;
     @Column(name = "created_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdOn = LocalDateTime.now();
@@ -37,7 +38,7 @@ public class Event {
     @Column(name = "event_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id")
     User initiator;
     @Embedded
@@ -56,6 +57,4 @@ public class Event {
     EventState state = EventState.PENDING;
     @Column(name = "title", length = 120)
     String title;
-    @Column(name = "views")
-    Long views = 0L;
 }

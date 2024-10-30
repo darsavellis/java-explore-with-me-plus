@@ -2,9 +2,11 @@ package ewm.compilation.model;
 
 import ewm.event.model.Event;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +16,18 @@ import java.util.List;
 @Setter
 @ToString
 @Table(name = "compilations")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name = "pinned")
     Boolean pinned;
-    @Column(name = "title", length = 255)
+    @Column(name = "title")
     String title;
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "compilations_events",
         joinColumns = {@JoinColumn(name = "compilation_id")},
         inverseJoinColumns = {@JoinColumn(name = "event_id")})
-    private List<Event> events = new ArrayList<>();
+    List<Event> events = new ArrayList<>();
 }

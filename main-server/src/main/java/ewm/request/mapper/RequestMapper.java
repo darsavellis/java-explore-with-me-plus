@@ -17,7 +17,9 @@ public interface RequestMapper {
     ParticipationRequestDto toParticipantRequestDto(ParticipationRequest participationRequest);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "requester", source = "requester")
     @Mapping(target = "event", source = "event")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "requester", source = "requester")
     ParticipationRequest toParticipationRequest(Event event, User requester);
 }

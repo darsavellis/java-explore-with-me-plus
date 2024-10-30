@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class PublicRequestServiceImpl implements PublicRequestService {
     final RequestMapper requestMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getSentBy(long userId) {
         return requestRepository.findAllByRequesterId(userId)
             .stream().map(requestMapper::toParticipantRequestDto).toList();
@@ -65,7 +67,7 @@ public class PublicRequestServiceImpl implements PublicRequestService {
 
     @Override
     public ParticipationRequestDto cancel(long requestId, long userId) {
-        User requester = userRepository.findById(userId)
+        userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("Requester с таким Id не найден"));
 
         ParticipationRequest participationRequest = requestRepository.findById(requestId)

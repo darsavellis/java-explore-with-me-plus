@@ -12,7 +12,6 @@ import ewm.request.model.ParticipationRequest;
 import ewm.request.model.RequestStatus;
 import ewm.request.repository.RequestRepository;
 import ewm.request.service.PrivateRequestService;
-import ewm.user.model.User;
 import ewm.user.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getReceivedBy(long userId, long eventId) {
         return requestRepository.findAllByEventIdAndEventInitiatorId(eventId, userId).stream()
             .map(requestMapper::toParticipantRequestDto).toList();
@@ -43,7 +42,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Override
     @Transactional
     public EventRequestStatusUpdateResult update(long userId, long eventId, EventRequestStatusUpdateRequest updateRequest) {
-        User initiator = userRepository.findById(userId)
+        userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("Пользователь с Id = " + userId + " не найден"));
         Event event = eventRepository.findById(eventId).filter(event1 -> event1.getInitiator().getId().equals(userId))
             .orElseThrow(() -> new NotFoundException("Событие с Id = " + eventId + " не найден"));

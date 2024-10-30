@@ -43,14 +43,9 @@ public class ErrorHandler {
         HandlerMethodValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(Exception exception) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        exception.printStackTrace(printWriter);
-        String errors = stringWriter.toString();
         String cause = "Ошибка при валидации данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .errors(errors)
             .message(exception.getMessage())
             .reason(cause)
             .status(HttpStatus.BAD_REQUEST.toString())
@@ -61,14 +56,9 @@ public class ErrorHandler {
     @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleDataIntegrityViolationException(Exception exception) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        exception.printStackTrace(printWriter);
-        String errors = stringWriter.toString();
         String cause = "Нарушение целостности данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .errors(errors)
             .message(exception.getMessage())
             .reason(cause)
             .status(HttpStatus.CONFLICT.toString())
@@ -79,14 +69,9 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(NotFoundException exception) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        exception.printStackTrace(printWriter);
-        String errors = stringWriter.toString();
         String cause = "Ошибка при поиске данных";
         log.info("{}: {}", cause, exception.getMessage());
         return ApiError.builder()
-            .errors(errors)
             .message(exception.getMessage())
             .reason(cause)
             .status(HttpStatus.NOT_FOUND.toString())

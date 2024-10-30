@@ -3,22 +3,25 @@ package ewm.user.controller;
 import ewm.user.dto.NewUserRequest;
 import ewm.user.dto.UserDto;
 import ewm.user.service.UserService;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users")
 @RequiredArgsConstructor
+@RequestMapping("/admin/users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserController {
     final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Validated @RequestBody NewUserRequest newUserRequest) {
+    public UserDto createUser(@Valid @RequestBody NewUserRequest newUserRequest) {
         return userService.create(newUserRequest);
     }
 
@@ -31,7 +34,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable(required = true) Long userId) {
+    public void deleteUser(@PathVariable Long userId) {
         userService.delete(userId);
     }
 }

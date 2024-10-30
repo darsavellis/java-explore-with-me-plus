@@ -2,9 +2,7 @@ package ewm.event.service.impl;
 
 
 import com.querydsl.core.BooleanBuilder;
-import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
-import ewm.category.service.PublicCategoryService;
 import ewm.event.dto.AdminEventParam;
 import ewm.event.dto.EventFullDto;
 import ewm.event.dto.UpdateEventAdminRequest;
@@ -17,8 +15,11 @@ import ewm.event.service.AdminEventService;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.request.model.RequestStatus;
+import ewm.request.repository.ConfirmedRequests;
 import ewm.request.repository.RequestRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminEventServiceImpl implements AdminEventService {
     final EventRepository eventRepository;
     final RequestRepository requestRepository;
-    final PublicCategoryService categoryService;
     final EventMapper eventMapper;
-    final CategoryMapper categoryMapper;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EventFullDto> getAllBy(AdminEventParam eventParam) {
         Pageable pageable = PageRequest.of(eventParam.getFrom(), eventParam.getSize());
         QEvent qEvent = QEvent.event;
@@ -56,17 +56,18 @@ public class AdminEventServiceImpl implements AdminEventService {
         Optional.ofNullable(eventParam.getRangeEnd())
             .ifPresent(rangeEnd -> booleanBuilder.and(qEvent.eventDate.before(rangeEnd)));
 
-        List<Event> events = eventRepository.findAll(booleanBuilder, pageable).getContent();
+        List<EventFullDto> events = eventRepository.findAll(booleanBuilder, pageable)
+            .stream().map(eventMapper::toEventFullDto).toList();
 
-        Map<Long, Long> requestCountMap = requestRepository.findAllByEventIdInAndStatusIs(
-            events.stream().map(Event::getId).toList(), RequestStatus.CONFIRMED
-        ).stream().collect(Collectors.groupingBy(req -> req.getEvent().getId(), Collectors.counting()));
+        List<Long> eventIds = events.stream().map(EventFullDto::getId).toList();
+        RequestStatus status = RequestStatus.CONFIRMED;
+        Map<Long, Long> confirmedRequestsMap = requestRepository
+            .findAllByEventIdInAndStatusIs(eventIds, status)
+            .stream().collect(Collectors.toMap(ConfirmedRequests::getEventId, ConfirmedRequests::getConfirmedRequests));
 
-        events.forEach(event -> {
-            event.setConfirmedRequests(requestCountMap.getOrDefault(event.getId(), 0L));
-        });
+        events.forEach(event -> event.setConfirmedRequests(confirmedRequestsMap.getOrDefault(event.getId(), 0L)));
 
-        return events.stream().map(eventMapper::toEventFullDto).toList();
+        return events.stream().toList();
     }
 
     @Override
