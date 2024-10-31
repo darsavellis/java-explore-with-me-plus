@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,9 +27,10 @@ public class Compilation {
     Boolean pinned;
     @Column(name = "title", nullable = false)
     String title;
-    @OneToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "compilations_events",
-        joinColumns = {@JoinColumn(name = "compilation_id")},
-        inverseJoinColumns = {@JoinColumn(name = "event_id")})
+        joinColumns = @JoinColumn(name = "compilation_id"),
+        inverseJoinColumns = @JoinColumn(name = "event_id"))
     Set<Event> events = new HashSet<>();
 }
