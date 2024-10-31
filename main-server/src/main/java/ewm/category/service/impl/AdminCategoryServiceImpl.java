@@ -20,9 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCategoryServiceImpl implements AdminCategoryService {
     final CategoryRepository categoryRepository;
-    final EventRepository eventRepository;
     final CategoryMapper categoryMapper;
-
+    final EventRepository eventRepository;
 
     @Override
     @Transactional

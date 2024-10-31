@@ -1,6 +1,5 @@
 package ewm.event.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import ewm.category.model.Category;
 import ewm.user.model.User;
 import jakarta.persistence.*;
@@ -9,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -26,18 +27,18 @@ public class Event {
     Long id;
     @Column(name = "annotation", length = 2000, nullable = false)
     String annotation;
+    @Fetch(FetchMode.JOIN)
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "category_id", nullable = false)
     Category category;
     @Column(name = "created_on")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime createdOn = LocalDateTime.now();
     @Column(name = "description", length = 7000)
     String description;
     @Column(name = "event_date", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime eventDate;
+    @Fetch(FetchMode.JOIN)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id", nullable = false)
     User initiator;
@@ -48,7 +49,6 @@ public class Event {
     @Column(name = "participant_limit")
     int participantLimit;
     @Column(name = "published_on")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime publishedOn;
     @Column(name = "request_moderation")
     boolean requestModeration;

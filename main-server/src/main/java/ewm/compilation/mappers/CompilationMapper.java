@@ -4,7 +4,6 @@ import ewm.compilation.dto.CompilationDto;
 import ewm.compilation.dto.NewCompilationDto;
 import ewm.compilation.dto.UpdateCompilationRequest;
 import ewm.compilation.model.Compilation;
-import ewm.compilation.repository.projections.EmptyCompilation;
 import ewm.event.mappers.EventMapper;
 import ewm.event.model.Event;
 import org.mapstruct.Mapper;
@@ -32,7 +31,4 @@ public interface CompilationMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", source = "events")
     Compilation toCompilation(NewCompilationDto compilationDto, List<Event> events);
-
-    @Mapping(target = "events", ignore = true)
-    CompilationDto toCompilationDto(EmptyCompilation emptyCompilation);
 }

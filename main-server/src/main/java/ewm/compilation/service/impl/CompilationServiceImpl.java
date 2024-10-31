@@ -1,16 +1,14 @@
 package ewm.compilation.service.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import ewm.compilation.dto.CompilationDto;
 import ewm.compilation.dto.NewCompilationDto;
 import ewm.compilation.dto.UpdateCompilationRequest;
 import ewm.compilation.mappers.CompilationMapper;
 import ewm.compilation.model.Compilation;
+import ewm.compilation.model.QCompilation;
 import ewm.compilation.repository.CompilationRepository;
-import ewm.compilation.repository.projections.CompilationEvent;
-import ewm.compilation.repository.projections.EmptyCompilation;
 import ewm.compilation.service.CompilationService;
-import ewm.event.dto.EventShortDto;
-import ewm.event.mappers.EventMapper;
 import ewm.event.model.Event;
 import ewm.event.repository.EventRepository;
 import ewm.exception.NotFoundException;
@@ -22,8 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,36 +29,19 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
     final CompilationRepository compilationRepository;
     final CompilationMapper compilationMapper;
-    final EventMapper eventMapper;
     final EventRepository eventRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<CompilationDto> getAll(Boolean pinned, Pageable pageRequest) {
-        Map<Long, List<Long>> compilationEventMap = compilationRepository.getCompilationEventMapping()
-            .stream().collect(Collectors.groupingBy(
-                CompilationEvent::getCompilationId,
-                Collectors.mapping(CompilationEvent::getEventId, Collectors.toList()))
-            );
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        Set<Long> eventIds = compilationEventMap.values()
-            .stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toSet());
+        if (pinned != null) {
+            booleanBuilder.and(QCompilation.compilation.pinned.eq(pinned));
+        }
 
-        Map<Long, EventShortDto> allEvents = eventRepository.findAllByIdIn(eventIds)
-            .stream()
-            .collect(Collectors.toMap(Event::getId, eventMapper::toEventShortDto));
-
-        List<EmptyCompilation> compilations = compilationRepository.findAllByPinnedIs(pinned, pageRequest);
-
-        return compilations
+        return compilationRepository.findAll(booleanBuilder, pageRequest)
             .stream().map(compilationMapper::toCompilationDto)
-            .peek(compilation -> compilation.setEvents(compilationEventMap.getOrDefault(
-                    compilation.getId(),
-                    Collections.emptyList())
-                .stream().map(allEvents::get)
-                .collect(Collectors.toSet())))
             .toList();
     }
 
