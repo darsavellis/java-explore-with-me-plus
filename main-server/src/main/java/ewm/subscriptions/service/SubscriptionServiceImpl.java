@@ -1,7 +1,9 @@
 package ewm.subscriptions.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
+import ewm.exception.ValidationException;
 import ewm.subscriptions.dto.SubscriptionDto;
 import ewm.subscriptions.mappers.SubscriptionMapper;
 import ewm.subscriptions.model.QSubscription;
@@ -76,6 +78,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public SubscriptionDto follow(long userId, long followingId) {
         log.info("Попытка пользователя с id = {} подписаться на пользователя с id = {}", userId, followingId);
+
+        if (userId == followingId) {
+            throw new ConflictException("Пользователь с id = " + " не может подписаться сам на себя");
+        }
+
         User follower = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));
         User following = userRepository.findById(followingId)
@@ -91,7 +98,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public void unfollow(long userId, long followingId) {
         log.info("Попытка пользователя с id = {} отписаться от пользователя с id = {}", userId, followingId);
-        subscriptionRepository.deleteByFollowingId(followingId);
+        int deleteCount = subscriptionRepository.deleteByFollowingId(followingId);
+        if (deleteCount == 0) {
+            throw new ValidationException("Некорректно заданные параметры");
+        }
         log.info("Пользователь с id = {} успешно отписался от пользователя с id = {}", userId, followingId);
     }
 }

@@ -57,9 +57,104 @@
 							"    pm.response.to.be.json;",
 							"});",
 							"",
-							"const target = pm.response.json();",
-							"var query = {};",
-							"pm.request.url.query.all().forEach((param) => { query[param.key] = param.value});",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписка должна иметь поля id, follower, follwoing, created\", function () {",
+							"    pm.expect(response).to.have.property(\"id\")",
+							"    pm.expect(response).to.have.property(\"follower\")",
+							"    pm.expect(response).to.have.property(\"following\")",
+							"    pm.expect(response).to.have.property(\"created\")",
+							"})",
+							"",
+							"pm.test(\"Поля id, follower, following, created не должны быть null\", function () {",
+							"    pm.expect(response).to.not.be.null",
+							"    pm.expect(response).to.not.be.null",
+							"    pm.expect(response).to.not.be.null",
+							"    pm.expect(response).to.not.be.null",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/:followingId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						":followingId"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						},
+						{
+							"key": "followingId",
+							"value": "{{uid1}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Подписка на самого себя",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const followerUser = await api.addUser(rnd.getUser());",
+							"        const followingUser = followerUser",
+							"        pm.collectionVariables.set('uid', followerUser.id);",
+							"        pm.collectionVariables.set('uid1', followingUser.id);",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            // выполняем наш скрипт",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 409 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(409);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
 							""
 						],
 						"type": "text/javascript",
@@ -96,13 +191,96 @@
 			"response": []
 		},
 		{
-			"name": "Отписаться",
+			"name": "Подписка на несуществующего пользователя",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const followerUser = await api.addUser(rnd.getUser());",
+							"        pm.collectionVariables.set('uid', followerUser.id);",
+							"        pm.collectionVariables.set('uid1', 500);",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(404);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/:followingId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						":followingId"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						},
+						{
+							"key": "followingId",
+							"value": "{{uid1}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Отписаться по id",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
 							"    pm.response.to.have.status(200);   ",
 							"});",
 							""
@@ -191,16 +369,14 @@
 			"response": []
 		},
 		{
-			"name": "Получение подписок администратором с использованием фильтров",
+			"name": "Некорректный id при отписке",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {",
-							"    pm.response.to.have.status(200);   ",
-							"    pm.response.to.be.withBody;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(400);   ",
 							"});",
 							""
 						],
@@ -215,22 +391,12 @@
 							"const main = async () => {",
 							"    const api = new API(pm);",
 							"    const rnd = new RandomUtils();",
-							"",
 							"    try {",
 							"        const targetUser = await api.addUser(rnd.getUser());",
 							"        const firstFollowingUser = await api.addUser(rnd.getUser());",
 							"        const secondFollowingUser = await api.addUser(rnd.getUser());",
-							"        const thirdFollowingUser = await api.addUser(rnd.getUser());",
-							"        const users = [firstFollowingUser, secondFollowingUser, thirdFollowingUser]",
 							"        pm.collectionVariables.set('uid', targetUser.id);",
-							"        for (const sourceUser of users) {",
-							"            await pm.sendRequest({",
-							"                url : \"http://localhost:8080/users/\" + targetUser.id + \"/subscriptions/\" + sourceUser.id,",
-							"                method : \"POST\",",
-							"                header: { \"Content-Type\": \"application/json\" }",
-							"                }, (error, response) => {",
-							"            });",
-							"        }",
+							"        pm.collectionVariables.set('uid1', 500);",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
@@ -257,22 +423,27 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/admin/:followerId/subscriptions",
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/:followingId",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"admin",
+						"users",
 						":followerId",
-						"subscriptions"
+						"subscriptions",
+						":followingId"
 					],
 					"variable": [
 						{
 							"key": "followerId",
 							"value": "{{uid}}"
+						},
+						{
+							"key": "followingId",
+							"value": "{{uid1}}"
 						}
 					]
 				}
@@ -291,7 +462,24 @@
 							"    pm.response.to.be.withBody;",
 							"    pm.response.to.be.json;",
 							"});",
-							""
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписчики должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписчиков должно быть равно 3\", function () {",
+							"    pm.expect(response.length).to.be.eq(3)",
+							"})"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -370,6 +558,221 @@
 			"response": []
 		},
 		{
+			"name": "Получении подписчиков без указанных параметров",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(200);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписчики должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписчиков должно быть равно 10\", function () {",
+							"    pm.expect(response.length).to.be.eq(10)",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const targetUser = await api.addUser(rnd.getUser());",
+							"        const users = []",
+							"        for (let i = 0; i < 15; i++) {",
+							"            users.push(await api.addUser(rnd.getUser()))",
+							"        }",
+							"        pm.collectionVariables.set('uid', targetUser.id);",
+							"        for (const sourceUser of users) {",
+							"            await pm.sendRequest({",
+							"                url : \"http://localhost:8080/users/\" + sourceUser.id + \"/subscriptions/\" + targetUser.id,",
+							"                method : \"POST\",",
+							"                header: { \"Content-Type\": \"application/json\" }",
+							"                }, (error, response) => {",
+							"            });",
+							"        }",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/followers",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						"followers"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получении подписчиков с лимитом",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(200);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписчики должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписчиков должно быть равно 5\", function () {",
+							"    pm.expect(response.length).to.be.eq(5)",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const targetUser = await api.addUser(rnd.getUser());",
+							"        const users = []",
+							"        for (let i = 0; i < 15; i++) {",
+							"            users.push(await api.addUser(rnd.getUser()))",
+							"        }",
+							"        pm.collectionVariables.set('uid', targetUser.id);",
+							"        for (const sourceUser of users) {",
+							"            await pm.sendRequest({",
+							"                url : \"http://localhost:8080/users/\" + sourceUser.id + \"/subscriptions/\" + targetUser.id,",
+							"                method : \"POST\",",
+							"                header: { \"Content-Type\": \"application/json\" }",
+							"                }, (error, response) => {",
+							"            });",
+							"        }",
+							"        pm.request.addQueryParams(\"size=5\")",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/followers",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						"followers"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Получение подписок пользователя",
 			"event": [
 				{
@@ -381,7 +784,24 @@
 							"    pm.response.to.be.withBody;",
 							"    pm.response.to.be.json;",
 							"});",
-							""
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписки должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписок должно быть равно 3\", function () {",
+							"    pm.expect(response.length).to.be.eq(3)",
+							"})"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -410,6 +830,221 @@
 							"                }, (error, response) => {",
 							"            });",
 							"        }",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/following",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						"following"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получении подписок без указанных параметров",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(200);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписки должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписок должно быть равно 10\", function () {",
+							"    pm.expect(response.length).to.be.eq(10)",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const targetUser = await api.addUser(rnd.getUser());",
+							"        const users = []",
+							"        for (let i = 0; i < 15; i++) {",
+							"            users.push(await api.addUser(rnd.getUser()))",
+							"        }",
+							"        pm.collectionVariables.set('uid', targetUser.id);",
+							"        for (const sourceUser of users) {",
+							"            await pm.sendRequest({",
+							"                url : \"http://localhost:8080/users/\" + targetUser.id + \"/subscriptions/\" + sourceUser.id,",
+							"                method : \"POST\",",
+							"                header: { \"Content-Type\": \"application/json\" }",
+							"                }, (error, response) => {",
+							"            });",
+							"        }",
+							"    } catch(err) {",
+							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+							"    }",
+							"};",
+							"",
+							"const interval = setInterval(() => {}, 1000);",
+							"",
+							"setTimeout(async () => ",
+							"    {",
+							"        try {",
+							"            await main();",
+							"        } catch (e) {",
+							"            console.error(e);",
+							"        } finally {",
+							"            clearInterval(interval);",
+							"        }",
+							"    },  ",
+							"    100 ",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/:followerId/subscriptions/following",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						":followerId",
+						"subscriptions",
+						"following"
+					],
+					"variable": [
+						{
+							"key": "followerId",
+							"value": "{{uid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получении подписок с лимитом",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+							"    pm.response.to.have.status(200);   ",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const response = pm.response.json()",
+							"pm.test(\"Подписки должны иметь поля id, name\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.have.property(\"id\")",
+							"            pm.expect(elem).to.have.property(\"name\")",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Поля id, name не должны быть null\", function () {",
+							"    for (const elem of response) {",
+							"            pm.expect(elem).to.not.be.null",
+							"    }",
+							"})",
+							"",
+							"pm.test(\"Количество подписок должно быть равно 5\", function () {",
+							"    pm.expect(response.length).to.be.eq(5)",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const main = async () => {",
+							"    const api = new API(pm);",
+							"    const rnd = new RandomUtils();",
+							"",
+							"    try {",
+							"        const targetUser = await api.addUser(rnd.getUser());",
+							"        const users = []",
+							"        for (let i = 0; i < 15; i++) {",
+							"            users.push(await api.addUser(rnd.getUser()))",
+							"        }",
+							"        pm.collectionVariables.set('uid', targetUser.id);",
+							"        for (const sourceUser of users) {",
+							"            await pm.sendRequest({",
+							"                url : \"http://localhost:8080/users/\" + targetUser.id + \"/subscriptions/\" + sourceUser.id,",
+							"                method : \"POST\",",
+							"                header: { \"Content-Type\": \"application/json\" }",
+							"                }, (error, response) => {",
+							"            });",
+							"        }",
+							"        pm.request.addQueryParams(\"size=5\")",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
