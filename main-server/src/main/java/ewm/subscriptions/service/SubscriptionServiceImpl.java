@@ -1,8 +1,10 @@
 package ewm.subscriptions.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import ewm.exception.NotFoundException;
 import ewm.subscriptions.dto.SubscriptionDto;
 import ewm.subscriptions.mappers.SubscriptionMapper;
+import ewm.subscriptions.model.QSubscription;
 import ewm.subscriptions.model.Subscription;
 import ewm.subscriptions.repository.SubscriptionRepository;
 import ewm.user.dto.UserShortDto;
@@ -26,24 +28,30 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     final UserMapper userMapper;
     final SubscriptionRepository subscriptionRepository;
     final UserRepository userRepository;
-
+    final JPAQueryFactory jpaQueryFactory;
+    final QSubscription qSubscription = QSubscription.subscription;
 
     @Override
     @Transactional(readOnly = true)
     public Set<SubscriptionDto> findAllBy(long userId) {
-        return subscriptionRepository
-            .findAll()
+        return jpaQueryFactory
+            .selectFrom(qSubscription)
+            .from(qSubscription)
+            .leftJoin(qSubscription.follower).fetchJoin()
+            .leftJoin(qSubscription.following).fetchJoin()
             .stream()
             .map(subscriptionMapper::toSubscriptionShortDto)
             .collect(Collectors.toSet());
-
     }
 
     @Override
     @Transactional(readOnly = true)
     public Set<UserShortDto> findFollowing(long userId) {
-        return subscriptionRepository
-            .findAllByFollowerId(userId)
+        return jpaQueryFactory
+            .selectFrom(qSubscription)
+            .leftJoin(qSubscription.following).fetchJoin()
+            .leftJoin(qSubscription.follower).fetchJoin()
+            .where(qSubscription.follower.id.eq(userId))
             .stream()
             .map(Subscription::getFollowing)
             .map(userMapper::toUserShortDto)
@@ -53,8 +61,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     @Transactional(readOnly = true)
     public Set<UserShortDto> findFollowers(long userId) {
-        return subscriptionRepository
-            .findALlByFollowingId(userId)
+        return jpaQueryFactory
+            .selectFrom(qSubscription)
+            .leftJoin(qSubscription.following).fetchJoin()
+            .leftJoin(qSubscription.follower).fetchJoin()
+            .where(qSubscription.following.id.eq(userId))
             .stream()
             .map(Subscription::getFollower)
             .map(userMapper::toUserShortDto)

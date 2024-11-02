@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping
+@RequiredArgsConstructor
 public class SubscriptionController {
     final SubscriptionService subscriptionService;
 

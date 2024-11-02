@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,7 @@ public class Subscription {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id")
     User following;
+    @CreationTimestamp
     @Column(name = "created")
-    LocalDateTime created = LocalDateTime.now();
+    LocalDateTime created;
 }
