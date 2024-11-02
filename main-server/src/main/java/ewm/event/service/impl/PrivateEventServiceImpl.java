@@ -81,7 +81,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional
     public EventFullDto create(long userId, NewEventDto newEventDto) {
-        User initiator = userMapper.toUser(userService.getBy(userId));
+        User initiator = userMapper.toUser(userService.findBy(userId));
         Category category = categoryMapper.toCategory(categoryService.getBy(newEventDto.getCategory()));
         Event event = eventMapper.toEvent(newEventDto, initiator, category);
         eventRepository.save(event);

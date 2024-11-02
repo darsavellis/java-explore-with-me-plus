@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserDto getBy(long userId) {
+    public UserDto findBy(long userId) {
         return userRepository.findById(userId)
             .map(userMapper::toUserDto)
             .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));
