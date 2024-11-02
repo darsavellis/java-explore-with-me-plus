@@ -4,6 +4,7 @@ import ewm.subscriptions.dto.SubscriptionDto;
 import ewm.subscriptions.service.SubscriptionService;
 import ewm.user.dto.UserShortDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +16,18 @@ import java.util.Set;
 public class SubscriptionController {
     final SubscriptionService subscriptionService;
 
-    @GetMapping("/admin/{userId}/subscriptions")
-    Set<SubscriptionDto> findAllBy(@PathVariable long userId) {
-        return subscriptionService.findAllBy(userId);
-    }
-
     @GetMapping("/users/{userId}/subscriptions/following")
-    Set<UserShortDto> findFollowingBy(@PathVariable long userId) {
-        return subscriptionService.findFollowing(userId);
+    Set<UserShortDto> findFollowingBy(@PathVariable long userId,
+                                      @RequestParam(required = false, defaultValue = "0") int from,
+                                      @RequestParam(required = false, defaultValue = "10") int size) {
+        return subscriptionService.findFollowing(userId, PageRequest.of(from, size));
     }
 
     @GetMapping("/users/{userId}/subscriptions/followers")
-    Set<UserShortDto> findFollowersBy(@PathVariable long userId) {
-        return subscriptionService.findFollowers(userId);
+    Set<UserShortDto> findFollowersBy(@PathVariable long userId,
+                                      @RequestParam(required = false, defaultValue = "0") int from,
+                                      @RequestParam(required = false, defaultValue = "10") int size) {
+        return subscriptionService.findFollowers(userId, PageRequest.of(from, size));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
