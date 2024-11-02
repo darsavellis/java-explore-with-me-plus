@@ -36,6 +36,7 @@ public class SubscriptionController {
         return subscriptionService.follow(userId, followingId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/users/{userId}/subscriptions/{followingId}")
     void unfollow(@PathVariable long userId, @PathVariable long followingId) {
         subscriptionService.unfollow(userId, followingId);
