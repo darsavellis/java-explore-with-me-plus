@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
@@ -33,7 +34,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDto> findAllBy(List<Long> ids, Pageable pageRequest) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserDto getBy(long userId) {
+    public UserDto findBy(long userId) {
         return userRepository.findById(userId)
             .map(userMapper::toUserDto)
             .orElseThrow(() -> new NotFoundException("Пользователь с Id =" + userId + " не найден"));

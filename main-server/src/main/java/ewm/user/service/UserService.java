@@ -13,5 +13,5 @@ public interface UserService {
 
     void deleteBy(long userId);
 
-    UserDto getBy(long userId);
+    UserDto findBy(long userId);
 }
