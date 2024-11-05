@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminEventServiceImpl implements AdminEventService {
     final EventRepository eventRepository;
@@ -41,7 +42,6 @@ public class AdminEventServiceImpl implements AdminEventService {
     final StatRestClient statRestClient;
 
     @Override
-    @Transactional(readOnly = true)
     public List<EventFullDto> getAllBy(AdminEventParam eventParam, Pageable pageRequest) {
         BooleanBuilder eventQueryExpression = buildBooleanExpression(eventParam);
 

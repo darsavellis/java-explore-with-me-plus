@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "requests", uniqueConstraints = @UniqueConstraint(columnNames = {"requester_id", "event_id"}))
+@Table(name = "requests")
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -25,8 +25,8 @@ public class CompilationController {
 
     @GetMapping("/compilations")
     public List<CompilationDto> getAll(@RequestParam(required = false) Boolean pinned,
-                                       @PositiveOrZero @RequestParam(required = false, defaultValue = "0") int from,
-                                       @Positive @RequestParam(required = false, defaultValue = "10") int size) {
+                                       @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                       @Positive @RequestParam(defaultValue = "10") int size) {
         return compilationService.getAll(pinned, PageRequest.of(from, size));
     }
 

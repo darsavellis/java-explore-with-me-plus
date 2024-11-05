@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubscriptionServiceImpl implements SubscriptionService {
     final SubscriptionRepository subscriptionRepository;
@@ -37,7 +38,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     final QSubscription qSubscription = QSubscription.subscription;
 
     @Override
-    @Transactional(readOnly = true)
     public Set<UserShortDto> findFollowing(long userId, Pageable page) {
         log.info("Получение подписок текущего пользователя с id = {}", userId);
         Set<UserShortDto> following = jpaQueryFactory
@@ -56,7 +56,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Set<UserShortDto> findFollowers(long userId, Pageable page) {
         log.info("Получение подписчиков текущего пользователя с id = {}", userId);
         Set<UserShortDto> followers = jpaQueryFactory

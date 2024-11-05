@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
@@ -33,7 +34,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDto> findAllBy(List<Long> ids, Pageable pageRequest) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 

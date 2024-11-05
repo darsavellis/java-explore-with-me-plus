@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicEventServiceImpl implements PublicEventService {
     final EventRepository eventRepository;
@@ -40,7 +41,6 @@ public class PublicEventServiceImpl implements PublicEventService {
     final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(PublicEventParam eventParam, Pageable pageRequest) {
         BooleanBuilder eventQueryExpression = buildExpression(eventParam);
         List<EventShortDto> events = getEvents(pageRequest, eventQueryExpression);
@@ -67,7 +67,6 @@ public class PublicEventServiceImpl implements PublicEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public EventFullDto getBy(long eventId) {
         EventFullDto event = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
             .orElseThrow(() -> new NotFoundException("Мероприятие с Id =" + eventId + " не найдено"));

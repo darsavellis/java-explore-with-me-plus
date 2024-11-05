@@ -25,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompilationServiceImpl implements CompilationService {
     final CompilationRepository compilationRepository;
@@ -32,7 +33,6 @@ public class CompilationServiceImpl implements CompilationService {
     final EventRepository eventRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<CompilationDto> getAll(Boolean pinned, Pageable pageRequest) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -46,7 +46,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public CompilationDto getBy(Long id) {
         Optional<Compilation> compilationOptional = compilationRepository.findById(id);
         if (compilationOptional.isEmpty()) {

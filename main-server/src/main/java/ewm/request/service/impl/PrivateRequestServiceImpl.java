@@ -24,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PrivateRequestServiceImpl implements PrivateRequestService {
     final RequestRepository requestRepository;
@@ -33,7 +34,6 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
 
     @Override
-    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getReceivedBy(long userId, long eventId) {
         return requestRepository.findAllByEventIdAndEventInitiatorId(eventId, userId).stream()
             .map(requestMapper::toParticipantRequestDto).toList();

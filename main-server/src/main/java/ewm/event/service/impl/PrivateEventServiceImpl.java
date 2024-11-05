@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PrivateEventServiceImpl implements PrivateEventService {
     final UserService userService;
@@ -52,7 +53,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    @Transactional(readOnly = true)
     public List<EventShortDto> getAllBy(long userId, Pageable pageRequest) {
         BooleanExpression booleanExpression = QEvent.event.initiator.id.eq(userId);
         List<EventShortDto> events = getEvents(pageRequest, booleanExpression);
@@ -89,7 +89,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public EventFullDto getBy(long userId, long eventId) {
         EventFullDto eventFullDto = eventRepository.findById(eventId).map(eventMapper::toEventFullDto)
             .orElseThrow(() -> new NotFoundException("Событие не найдено"));

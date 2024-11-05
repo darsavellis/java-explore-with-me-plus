@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminCategoryServiceImpl implements AdminCategoryService {
     final CategoryRepository categoryRepository;
@@ -24,13 +25,11 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     final EventRepository eventRepository;
 
     @Override
-    @Transactional
     public CategoryDto create(NewCategoryDto categoryDto) {
         return categoryMapper.toCategoryDto(categoryRepository.save(categoryMapper.toCategory(categoryDto)));
     }
 
     @Override
-    @Transactional
     public void deleteBy(long id) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Категории с id = " + id + " не существует"));
@@ -41,7 +40,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     @Override
-    @Transactional
     public CategoryDto updateBy(long id, NewCategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Категория не найдена"));

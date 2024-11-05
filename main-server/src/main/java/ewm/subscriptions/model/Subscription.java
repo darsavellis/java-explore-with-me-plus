@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "subscriptions", uniqueConstraints = @UniqueConstraint(columnNames = {"follower", "following"}))
+@Table(name = "subscriptions")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Subscription {
     @Id

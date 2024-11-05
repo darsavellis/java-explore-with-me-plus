@@ -24,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PublicRequestServiceImpl implements PublicRequestService {
     final RequestRepository requestRepository;
@@ -32,13 +33,13 @@ public class PublicRequestServiceImpl implements PublicRequestService {
     final RequestMapper requestMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getSentBy(long userId) {
         return requestRepository.findAllByRequesterId(userId)
             .stream().map(requestMapper::toParticipantRequestDto).toList();
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto send(long userId, long eventId) {
         User requester = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("Пользователь с id = " + userId + " не найден"));

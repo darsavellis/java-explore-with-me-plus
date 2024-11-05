@@ -18,15 +18,15 @@ public class SubscriptionController {
 
     @GetMapping("/users/{userId}/subscriptions/following")
     Set<UserShortDto> findFollowingBy(@PathVariable long userId,
-                                      @RequestParam(required = false, defaultValue = "0") int from,
-                                      @RequestParam(required = false, defaultValue = "10") int size) {
+                                      @RequestParam(defaultValue = "0") int from,
+                                      @RequestParam(defaultValue = "10") int size) {
         return subscriptionService.findFollowing(userId, PageRequest.of(from, size));
     }
 
     @GetMapping("/users/{userId}/subscriptions/followers")
     Set<UserShortDto> findFollowersBy(@PathVariable long userId,
-                                      @RequestParam(required = false, defaultValue = "0") int from,
-                                      @RequestParam(required = false, defaultValue = "10") int size) {
+                                      @RequestParam(defaultValue = "0") int from,
+                                      @RequestParam(defaultValue = "10") int size) {
         return subscriptionService.findFollowers(userId, PageRequest.of(from, size));
     }
 
